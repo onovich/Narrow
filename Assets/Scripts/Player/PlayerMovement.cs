@@ -63,6 +63,8 @@ public class PlayerMovement : MonoBehaviour
         //Vector2 offset = Horizontal > 0 ? trans.right : -trans.right;
         //rigid.AddForce(-offset * 400);
 
+        trail.Clear();
+
         if (onMoving)
         {
             stop = true;
@@ -105,8 +107,8 @@ public class PlayerMovement : MonoBehaviour
             
 
             //角色形变控制
-            //移动时
-            if ((!stop) &&(!onCollidering))
+            //移动时:未因碰撞停止且未碰撞，且有按加速键
+            if (((!stop) &&(!onCollidering))&&(Horizontal!=0))
             {
                 //缩小拉长
                 onMoving = true;
