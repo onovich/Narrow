@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fdae4c48e1cf47feb2c7b0867930f24, type: 3}
   m_Name: PlayerSetting
   m_EditorClassIdentifier: 
-  moveSpeed: 1
-  moveSpeedHolding: 0.2
+  moveSpeed: 10
+  speedUpScale: {x: 1.2, y: 0.4}
+  trailWidth: 0.1
+  trailWidthScale: 0.04

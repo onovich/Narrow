@@ -1,89 +1,156 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
+using UnityEngine.Events;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovement : MonoBehaviour
 {
-    private Transform trans { get { return gameObject.transform; } }
+    private Transform trans;
     private Vector3 pos { get { return trans.position; } }
-    private Transform DirTrans { get { return Dir.transform; } }
 
     [HideInInspector]
     public bool movable = true;
-    public Animator ani;
     public PlayerSetting setting;
 
-    private float Vertical;
     private float Horizontal;
-    private Vector2 MouseScrPos;
-    private Vector2 ObjScrPos;
-    private Vector3 dir;
-    public GameObject Dir;
     private Vector3 normalSpeed;
-    private float speed{ get{ if (Input.GetKeyDown(KeyCode.LeftShift)) { return setting.moveSpeedHolding; } else return setting.moveSpeed; } }
+    private float speed{ get{return setting.moveSpeed; } }
 
     private Rigidbody2D rigid{get{ return GetComponent<Rigidbody2D>(); }}
 
-    
+    private Vector3 speedUpScale { get { return (Vector3)setting.speedUpScale + Vector3.forward; } }
+
+    public TrailRenderer trail;
+
+    private float trailWidth { get { return setting.trailWidth; } }
+    private float trailWidthScale { get { return setting.trailWidthScale; } }
+
+    private LayerMask obb;
+    ContactFilter2D filter;
+    public int hitNumber = 0;
+
+    private void Start()
+    {
+        trans = transform;
+        obb = LayerMask.GetMask("OBB");
+        filter = new ContactFilter2D
+        {
+            useLayerMask = true,
+            //useTriggers = false,
+            useTriggers = true,
+            layerMask = obb,
+
+        };
+
+        collide = new UnityAction(onCollide);
+        collideEvent.AddListener(collide);
+    }
+
+    UnityAction collide;
+    UnityEvent collideEvent = new UnityEvent();
+
+    bool onMoving = false;
+    bool onCollidering = false;
+
+    void onCollide()
+    {
+        Debug.Log("碰撞！");
+        //rigid.velocity = new Vector3(0, 0, 0);
+
+        //rigid.velocity = new Vector3(0, 0, 0);
+        //Vector2 offset = Horizontal > 0 ? trans.right : -trans.right;
+        //rigid.AddForce(-offset * 400);
+
+        if (onMoving)
+        {
+            stop = true;
+
+            //除重
+            if (trans.localScale != Vector3.one)
+            {
+                //trans.localScale = Vector3.Lerp(trans.localScale, speedUpScale, .1f);
+                trans.DOScale(Vector3.one, .5f);
+                trail.DOResize(trailWidth, .01f, .5f);
+
+            }
+        }
+
+        
+    }
+
+    bool stop = true;
+
     void Update()
     {
         if (movable)
         {
-            //手电转角控制
-            MouseScrPos = Input.mousePosition;
-            ObjScrPos = Camera.main.WorldToScreenPoint(pos);
-            dir = (MouseScrPos - ObjScrPos).normalized;
-            DirTrans.up = dir;
-
-            //角色移动控制
-            Vertical = Input.GetAxis("Vertical");
-            Horizontal = Input.GetAxis("Horizontal");
-            normalSpeed = (new Vector3(Horizontal, Vertical, 0)).normalized;
-            if (normalSpeed != Vector3.zero)
+            if ((Input.GetKeyDown(KeyCode.A)) || (Input.GetKeyDown(KeyCode.D)))
             {
-                //trans.position += normalSpeed * speed * Time.smoothDeltaTime;
-                rigid.velocity += (Vector2) normalSpeed * speed * Time.smoothDeltaTime;
-                //rigid.AddForce(normalSpeed * speed*100);
-                //Debug.Log("速度=" + speed);
-
+                stop = false;
             }
 
-            //角色屏息控制
-            //切换动画以及速度
-            //还需补充切换音量
-            
-            if (Input.GetKeyDown(KeyCode.LeftShift))
+            if (!stop)
             {
-                //speed = setting.moveSpeedHolding;
-                //Debug.Log("Hold速度="+speed);
-                ani.SetBool("Hold", true);
-            }
-            if (Input.GetKeyUp(KeyCode.LeftShift))
-            {
-                //speed = setting.moveSpeed;
-                ani.SetBool("Hold", false);
+                //角色移动控制
+                Horizontal = Input.GetAxis("Horizontal");
+                normalSpeed = (new Vector3(Horizontal, 0, 0)).normalized;
+                if (normalSpeed != Vector3.zero)
+                {
+                    rigid.velocity += (Vector2)normalSpeed * speed * Time.smoothDeltaTime;
+                }
             }
             
+            
 
-            /*
-            if (Vertical!=0)
+            //角色形变控制
+            //移动时
+            if ((!stop) &&(!onCollidering))
             {
-                trans.Translate(Vector3.up * Vertical * moveSpeed);
+                //缩小拉长
+                onMoving = true;
+                //除重
+                if(trans.localScale != speedUpScale)
+                {
+                    //trans.localScale = Vector3.Lerp(trans.localScale, speedUpScale, .1f);
+                    trans.DOScale(speedUpScale,.5f);
+                    trail.DOResize(trailWidthScale, .01f, .5f);
+                }
             }
-            if (Horizontal != 0)
+            //未移动时
+            else
             {
-                trans.Translate(Vector3.right * Horizontal * moveSpeed);
-            }
-            */
-            /*
-            if (Input.GetMouseButton(0))
-            {
-                Debug.Log("鼠标左键");
-                trans.Translate(Vector3.up * moveSpeed * Time.smoothDeltaTime);
-                //trans.DOMove(trans.position+dir,1,true);
+                //变回原样
+                onMoving = false;
+                //除重
+                if (trans.localScale != Vector3.one)
+                {
+                    //trans.localScale = Vector3.Lerp(trans.localScale, speedUpScale, .1f);
+                    trans.DOScale(Vector3.one, .5f);
+                    trail.DOResize(trailWidth, .01f, .5f);
+
+                }
 
             }
-            */
+
+            //角色碰撞检测
+            RaycastHit2D[] hits = new RaycastHit2D[36];
+            float dis = .1f;
+            Vector2 offset = Horizontal > 0 ? trans.right : -trans.right;
+            hitNumber = Physics2D.Raycast(trans.position, offset, filter, hits, dis);
+
+            if (hitNumber > 0)
+            {
+                onCollidering = true;
+                collideEvent.Invoke();
+            }
+            else
+            {
+                onCollidering = false;
+            }
+
+
         }
     }
     

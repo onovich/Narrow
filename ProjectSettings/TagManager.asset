@@ -75,42 +75,42 @@ TagManager:
   - name: bc
     uniqueID: 1985820623
     locked: 0
-  - name: tileMap-ground
+  - name: bcEffect
     uniqueID: 1819369611
     locked: 0
-  - name: bcTest
+  - name: world
     uniqueID: 3879083673
     locked: 0
-  - name: bcEffect
+  - name: worldEffect
     uniqueID: 2134051393
     locked: 0
-  - name: effect
+  - name: npcBcEffect
+    uniqueID: 2796875327
+    locked: 0
+  - name: npc
     uniqueID: 438000089
     locked: 0
-  - name: item
+  - name: npcEffect
     uniqueID: 1741680073
     locked: 0
-  - name: tileMap-Wall
+  - name: building
     uniqueID: 774493131
     locked: 0
   - name: gear
     uniqueID: 3066756849
     locked: 0
-  - name: enemy
-    uniqueID: 4107086441
-    locked: 0
-  - name: npc
-    uniqueID: 1366599275
+  - name: playerBcEffect
+    uniqueID: 3212543247
     locked: 0
   - name: player
-    uniqueID: 2796875327
+    uniqueID: 4107086441
+    locked: 0
+  - name: playerEffect
+    uniqueID: 1366599275
     locked: 0
   - name: frontEffect
     uniqueID: 1289620569
     locked: 0
   - name: UI
     uniqueID: 469199721
-    locked: 0
-  - name: frontTest
-    uniqueID: 3212543247
     locked: 0

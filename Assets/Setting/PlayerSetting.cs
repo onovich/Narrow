@@ -5,5 +5,7 @@ using UnityEngine;
 public class PlayerSetting : ScriptableObject
 {
     public float moveSpeed = 0.5f;
-    public float moveSpeedHolding = 0.3f;
+    public Vector2 speedUpScale = new Vector2(1,0.2f);
+    public float trailWidth = .1f;
+    public float trailWidthScale = .04f;
 }
