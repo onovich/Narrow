@@ -30,7 +30,7 @@ public class PlayerMovement : MonoBehaviour
     private LayerMask obb;
     ContactFilter2D filter;
     public int hitNumber = 0;
-
+    Vector3 originalCameraPos;
     private void Start()
     {
         trans = transform;
@@ -46,6 +46,8 @@ public class PlayerMovement : MonoBehaviour
 
         collide = new UnityAction(onCollide);
         collideEvent.AddListener(collide);
+        originalCameraPos = Camera.main.transform.position;
+
     }
 
     UnityAction collide;
@@ -53,6 +55,19 @@ public class PlayerMovement : MonoBehaviour
 
     bool onMoving = false;
     bool onCollidering = false;
+
+
+    public ParticleSystem particle;
+
+
+    IEnumerator CameraShake()
+    {
+        Vector3 offset = new Vector3(0.02f, 0.02f,0f);
+        Camera.main.transform.position = originalCameraPos+offset;
+        yield return new WaitForSeconds(.1f);
+        Camera.main.transform.position = originalCameraPos;
+    }
+
 
     void onCollide()
     {
@@ -62,6 +77,17 @@ public class PlayerMovement : MonoBehaviour
         //rigid.velocity = new Vector3(0, 0, 0);
         //Vector2 offset = Horizontal > 0 ? trans.right : -trans.right;
         //rigid.AddForce(-offset * 400);
+
+        if (particle.isPlaying)
+        {
+            particle.Stop();
+        }
+        particle.Play();
+
+        StopCoroutine(CameraShake());
+        StartCoroutine(CameraShake());
+
+
 
         trail.Clear();
 
