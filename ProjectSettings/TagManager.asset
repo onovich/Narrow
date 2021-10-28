@@ -5,36 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
-  - New tag
-  - Rock
-  - WaitPoint
   - UI
-  - SnowBall
-  - ComPass
-  - APP
-  - Effect
-  - Camera
-  - HP
-  - MainCameraHolder
-  - mainUI
-  - Healer
-  - HealerZone
-  - mainText
-  - mainTextBG
-  - pathPoint
-  - pathFinishPoint
   - npc
-  - GameOver
-  - ColorManager
-  - PlayerCopy
-  - Speak
-  - Shield
-  - Key
-  - Flow
-  - KillerFlow
-  - Ray
-  - Wall
-  - PathNod
+  - wall
+  - player
   layers:
   - Default
   - TransparentFX
@@ -53,7 +27,7 @@ TagManager:
   - 
   - 
   - OBB
-  - 
+  - bullet
   - 
   - 
   - 
