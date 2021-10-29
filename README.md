@@ -7,3 +7,5 @@ A game in the early stages of development, inspired by the "one-dimensional worl
  
  
  " Matthew 7,14：But small is the gate and narrow the way that leads to life, and only a few find it. "
+
+![](https://github.com/onovich/Narrow/blob/main/Assets/Graphics/Samples/narrowsample.png)
