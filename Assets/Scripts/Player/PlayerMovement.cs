@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.Events;
+using deVoid.Utils;
+using System;
 
-[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D))]
 public class PlayerMovement : MonoBehaviour
 {
     private Transform trans;
@@ -29,14 +31,12 @@ public class PlayerMovement : MonoBehaviour
 
     private Transform waveTrans;
 
-    private LayerMask obb;
-    private LayerMask bullet;
     ContactFilter2D filter;
-    ContactFilter2D bulletFilter;
-    public int hitNumber = 0;
-    Vector3 originalCameraPos;
+    private LayerMask wall;
 
-    bool onParry = false;
+
+    public int hitNumber = 0;
+ 
 
 
     private void Start()
@@ -44,29 +44,14 @@ public class PlayerMovement : MonoBehaviour
         trans = transform;
         waveTrans = wave.transform;
         waveOriginalPos = waveTrans.localPosition;
-        obb = LayerMask.GetMask("OBB");
-        bullet = LayerMask.GetMask("bullet");
+        wall = LayerMask.GetMask("OBB");
+
         filter = new ContactFilter2D
         {
             useLayerMask = true,
-            //useTriggers = false,
-            useTriggers = true,
-            layerMask = obb,
-
+            useTriggers = false,
+            layerMask = wall,
         };
-        bulletFilter = new ContactFilter2D
-        {
-            useLayerMask = true,
-            //useTriggers = false,
-            useTriggers = true,
-            layerMask = bullet,
-
-        };
-
-        //collide = new UnityAction(onCollide);
-        //collideEvent.AddListener(collide);
-        originalCameraPos = Camera.main.transform.position;
-
     }
 
     //UnityAction collide;
@@ -80,6 +65,7 @@ public class PlayerMovement : MonoBehaviour
 
     public SpriteRenderer wave;
 
+    /*
     IEnumerator CameraShake()
     {
         Vector3 offset = new Vector3(0.02f, 0.02f,0f);
@@ -87,19 +73,20 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForSeconds(.1f);
         Camera.main.transform.position = originalCameraPos;
     }
+    */
 
+    private void Awake()
+    {
+ 
+    }
+
+     
 
     void onCollide(GameObject collision)
     {
-        Debug.Log("碰撞！");
-        //rigid.velocity = new Vector3(0, 0, 0);
-
-        //rigid.velocity = new Vector3(0, 0, 0);
-        //Vector2 offset = Horizontal > 0 ? trans.right : -trans.right;
-        //rigid.AddForce(-offset * 400);
-
-        StopCoroutine(CameraShake());
-        StartCoroutine(CameraShake());
+        CameraShake.instance.Shake();
+        //StopCoroutine(CameraShake());
+        //StartCoroutine(CameraShake());
 
         if (collision.CompareTag("npc"))
         {
@@ -141,80 +128,27 @@ public class PlayerMovement : MonoBehaviour
     Vector3 waveOriginalPos;
     float waveOffset = 1;
 
-    public SpriteRenderer parry;
 
 
 
-    void Rebound(BulletString bullet)
-    {
-        particle.Play();
-        bullet.SetDir(-bullet.direction);
-
-    }
-
-    void ParryOn()
-    {
-        if (!onParry)
-        {
-            parry.DOColor(new Color(255, 255, 255, 255), 1f);
-
-        }
-        onParry = true;
-
-    }
-    void ParryOff()
-    {
-        if (onParry)
-        {
-            parry.DOColor(new Color(255, 255, 255, 0), .4f);
-
-        }
-        onParry = false;
-
-    }
+    
 
     void Update()
     {
         //Debug.Log("当前速度="+rigid.velocity+",Time:"+Time.time);
 
 
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Debug.Log("护盾开启");
-            ParryOn();
-        }
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            Debug.Log("护盾关闭");
-            ParryOff();
-        }
+        
 
-        //角色碰撞检测
-        RaycastHit2D[] bulletHurtHits = new RaycastHit2D[36];
-        RaycastHit2D[] bulletReboundHits = new RaycastHit2D[36];
-
-        float bulletHurtDis = .01f;
-        float bulletReboundDis = 1f;
-
-        Vector2 bulletOffset = Horizontal > 0 ? trans.right : -trans.right;
-        int bulletHurtHitNumber = Physics2D.Raycast(trans.position, bulletOffset * .01f, bulletFilter, bulletHurtHits, bulletHurtDis);
-        int bulletReboundHitNumber = Physics2D.Raycast(trans.position, bulletOffset * .01f, bulletFilter, bulletReboundHits, bulletReboundDis);
-
-
-        if ((!onParry)&&(bulletHurtHitNumber > 0))
-        {
-            particle.Play();
-            Destroy(gameObject); 
-
-        }
-
+      
+        /* 
         if ((onParry)&&(bulletReboundHitNumber > 0))
         {
              
-            Rebound(bulletReboundHits[0].collider.GetComponent<BulletString>());
+            Rebound(bulletReboundHits[0].collider.GetComponent<Bullet>());
 
         }
-
+        */
 
 
         if (Input.GetKey(KeyCode.D))
@@ -257,8 +191,9 @@ public class PlayerMovement : MonoBehaviour
             particle.Simulate(0, false, true);
             particle.Play();
 
-            StopCoroutine(CameraShake());
-            StartCoroutine(CameraShake());
+            CameraShake.instance.Shake();
+            //StopCoroutine(CameraShake());
+            //StartCoroutine(CameraShake());
         }
 
         if (movable)
@@ -316,6 +251,7 @@ public class PlayerMovement : MonoBehaviour
 
             }
 
+            
 
             //角色碰撞检测
             RaycastHit2D[] hits = new RaycastHit2D[36];
@@ -334,6 +270,7 @@ public class PlayerMovement : MonoBehaviour
                 onCollidering = false;
             }
 
+            
 
         }
     }

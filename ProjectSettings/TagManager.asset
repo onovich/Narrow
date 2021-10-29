@@ -9,6 +9,8 @@ TagManager:
   - npc
   - wall
   - player
+  - Effect
+  - bullet
   layers:
   - Default
   - TransparentFX
@@ -27,7 +29,7 @@ TagManager:
   - 
   - 
   - OBB
-  - bullet
+  - harm
   - 
   - 
   - 
@@ -85,6 +87,12 @@ TagManager:
   - name: frontEffect
     uniqueID: 1289620569
     locked: 0
+  - name: frontMask
+    uniqueID: 1646174913
+    locked: 0
   - name: UI
     uniqueID: 469199721
+    locked: 0
+  - name: UIMask
+    uniqueID: 635974201
     locked: 0

@@ -43,11 +43,11 @@ public class GameObjectPoolTimeCheck : MonoBehaviour
 
         if (gameObject == null)
         {
-            Debug.LogError("Check入池！对象为空");
+            //Debug.LogError("Check入池！对象为空");
         }
         else
         {
-            Debug.Log("Check入池成功"+gameObject.name);
+            //Debug.Log("Check入池成功"+gameObject.name);
         }
 
         manager.ReturnInstance(poolName, gameObject);

@@ -83,7 +83,7 @@ public class GameObjectPool : SerializedMonoBehaviour
             gameObject = poolStack.Pop();
             if (gameObject == null)
             {
-                Debug.LogError("stack中取到了空对象");//触发了，说明是取之前已经为空。但没有空对象入池，说明是入池后、出池前变空的。
+                //Debug.LogError("stack中取到了空对象");//触发了，说明是取之前已经为空。但没有空对象入池，说明是入池后、出池前变空的。
             }
 
         }
@@ -91,14 +91,14 @@ public class GameObjectPool : SerializedMonoBehaviour
         else
         {
             gameObject = NewInstance();
-            Debug.Log("池中没有对象了，新生成对象");
+            //Debug.Log("池中没有对象了，新生成对象");
         }
         //初始化新生成的对象
         //设置父对象、坐标，挂载lifetimeCheck组件并初始化lifetime、poolName
         //Debug.Log("设置父对象："+ instanceParentTrans.name);
         if (gameObject == null)
         {
-            Debug.LogError("新对象异常：为空");//说明Get方法取到了被摧毁的对象，说明被摧毁的对象仍存在于queue中未成功移除
+            //Debug.LogError("新对象异常：为空");//说明Get方法取到了被摧毁的对象，说明被摧毁的对象仍存在于queue中未成功移除
         }
         gameObject.transform.SetParent(instanceParentTrans);
 
@@ -153,7 +153,7 @@ public class GameObjectPool : SerializedMonoBehaviour
         {
             //Debug.Log("对象已入池:当前queueCount:"+poolQueue.Count+"maxCount="+maxCount);
             //Debug.Log("对象已入池:当前queueCount:" + poolCCQueue.Count + "maxCount=" + maxCount);
-            Debug.Log("对象已入池:当前stackCount:" + poolStack.Count + "maxCount=" + maxCount);
+            //Debug.Log("对象已入池:当前stackCount:" + poolStack.Count + "maxCount=" + maxCount);
             if (gameObject == null)
             {
                 Debug.LogError("空对象入池了");//未检测到,说明没有空对象入池，入池的对象并不是在入池前销毁的
@@ -173,7 +173,7 @@ public class GameObjectPool : SerializedMonoBehaviour
         else
         {
             //禁用、销毁对象
-            Debug.Log("对象已销毁"+gameObject.name);
+            //Debug.Log("对象已销毁"+gameObject.name);
             //gameObject.SetActive(false);
             //gameObject.name = "null";
             Destroy(gameObject);//销毁的方法只有这一个，为什么它可以使入池后、出池前的对象变空？是因为此时gameObject是一个入池后出池前的对象引用吗？

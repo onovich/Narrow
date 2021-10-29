@@ -19,8 +19,7 @@ public class TriggerCreater : MonoBehaviour
     public void AddTriggerComponent(GameObject target, float r)
     {
         Global global = Global.instance;
-        Grid grid = global.grid;
-
+ 
         CircleCollider2D circle = target.AddComponent<CircleCollider2D>();
         circle.isTrigger = true;
         circle.radius = r;
@@ -33,15 +32,13 @@ public class TriggerCreater : MonoBehaviour
     public void AddTriggerComponent(GameObject target, int r)
     {
         Global global = Global.instance;
-        Grid grid = global.grid;
-
+ 
         CircleCollider2D circle = target.AddComponent<CircleCollider2D>();
         circle.isTrigger = true;
         //circle.radius = r * grid.cellSize.x;
-        circle.radius = r * grid.cellSize.x;
+        circle.radius = r;
         circle.offset = new Vector2(0, 0);
-        Debug.Log("x=" + grid.cellSize.x + "r=" + r + "sum=" + circle.radius);
-
+ 
     }
 
     public GameObject AddTriggerObject(float r, Transform parentTrans, string name)

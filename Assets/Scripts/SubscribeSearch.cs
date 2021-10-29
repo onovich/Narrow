@@ -13,8 +13,7 @@ namespace Silent.MapObject.SearchObject
     public class SubscribeSearch : MonoBehaviour
     {
         private Global global;
-        private Grid grid;
-
+ 
         //-----
         //判定方法
         //判定当前坐标是否符合查找条件
@@ -22,9 +21,7 @@ namespace Silent.MapObject.SearchObject
         {
             int[] localPostion = new int[2];
             Vector2 pos = transform.position;
-            localPostion[0] = grid.WorldToCell(pos).x;
-            localPostion[1] = grid.WorldToCell(pos).y;
-
+  
             return (localPostion[0] == position[0]) && (localPostion[1] == position[1]);
         }
         //判定当前ID是否符合查找条件
@@ -38,8 +35,7 @@ namespace Silent.MapObject.SearchObject
         private void Start()
         {
             global = Global.instance;
-            grid = global.grid;
-
+ 
             SearchGameObject sgo = global.sgo;
 
             //订阅全局搜索脚本中的搜索方法
