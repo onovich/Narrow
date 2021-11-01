@@ -132,15 +132,13 @@ public class Parry : MonoBehaviour
             else
             {
                 //Debug.Log("盾反成功");
-                Tween tweener2 = parrySprite.DOColor(new Color(1, 1, 1, 0), .02f);
-                Tween tweener3 = parrySprite.transform.DOScale(new Vector3(2.2f, 2.2f, 1), .05f);
                 parrySprite.sprite = parryBlack;
-                Tween tweener4 = parrySprite.transform.DOScale(new Vector3(3f, 3f, 1), .05f);
-
-                //player.DOColor(new Color(1, 1, 1, 1f), .1f);
+                Tween tweener4 = parrySprite.transform.DOScale(new Vector3(1.6f, 1.6f, 1), .1f);
+                Tween tweener2 = parrySprite.DOColor(new Color(1, 1, 1, 0), .1f);
+                 
+              
                 player.color = new Color(1, 1, 1, 1f);
                 yield return tweener2.WaitForCompletion();
-                yield return tweener3.WaitForCompletion();
                 yield return tweener4.WaitForCompletion();
 
 

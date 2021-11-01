@@ -64,17 +64,32 @@ public class Bullet : MonoBehaviour
     public bool ifRebound = false;
 
 
-    // Update is called once per frame
-    void Update()
+    private void FixedUpdate()
     {
-        Vector3 normalSpeed = (new Vector3(direction, 0, 0)).normalized * speed ; 
+        Vector3 normalSpeed = (new Vector3(direction, 0, 0)).normalized * speed;
         if (normalSpeed != Vector3.zero)
         {
-            rigid.velocity += (Vector2)normalSpeed * speed * Time.smoothDeltaTime;
-
+            //rigid.velocity += (Vector2)normalSpeed * speed * Time.smoothDeltaTime;
+            rigid.velocity += (Vector2)normalSpeed * speed * Time.deltaTime;
 
 
         }
+    }
+
+
+    // Update is called once per frame
+    void Update()
+    {
+        /*
+        Vector3 normalSpeed = (new Vector3(direction, 0, 0)).normalized * speed ; 
+        if (normalSpeed != Vector3.zero)
+        {
+            //rigid.velocity += (Vector2)normalSpeed * speed * Time.smoothDeltaTime;
+            rigid.velocity += (Vector2)normalSpeed * speed * Time.deltaTime;
+
+
+        }
+        */
 
         RaycastHit2D[] playerHits = new RaycastHit2D[36];
         RaycastHit2D[] wallHits = new RaycastHit2D[36];
