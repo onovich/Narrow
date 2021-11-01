@@ -6,6 +6,14 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
 
+    private void OnEnable()
+    {
+        trail.SetActive(false);
+        ifRebound = false;
+        trail.GetComponent<TrailRenderer>().Clear();
+    }
+
+
     public void SetDir(int dir)
     {
         direction = dir;
@@ -25,13 +33,12 @@ public class Bullet : MonoBehaviour
     ContactFilter2D wallFilter;
 
     Transform trans;
-    SpriteRenderer sprite;
-
+ 
+    public GameObject trail;
 
     void Start()
     {
         trans = transform;
-        sprite = GetComponent<SpriteRenderer>();
         rigid = GetComponent<Rigidbody2D>();
         SetDir(direction);
 
@@ -53,6 +60,9 @@ public class Bullet : MonoBehaviour
 
     }
 
+    [HideInInspector]
+    public bool ifRebound = false;
+
 
     // Update is called once per frame
     void Update()
@@ -69,19 +79,24 @@ public class Bullet : MonoBehaviour
         RaycastHit2D[] playerHits = new RaycastHit2D[36];
         RaycastHit2D[] wallHits = new RaycastHit2D[36];
 
-        float playerDis = .1f;
-        float wallDis = .1f;
+        float playerDis = .08f;
+        float wallDis = .08f;
 
         Vector2 bulletOffset = direction > 0 ? trans.right : -trans.right;
         int playerHitNumber = Physics2D.Raycast(trans.position, bulletOffset * playerDis, playerFilter, playerHits, playerDis);
         int wallHitNumber = Physics2D.Raycast(trans.position, bulletOffset * wallDis, wallFilter, wallHits, wallDis);
 
+        
 
         
         if (playerHitNumber > 0)
         {
             
-            //gameObject.SetActive(false);
+            gameObject.SetActive(false);
+            playerHits[0].collider.gameObject.GetComponent<Destructible>().GetHurt(GetComponent<Attack>().attackValue);
+            //CameraShake.instance.FlashRed();
+            CameraShake.instance.Shake();
+
 
         }
         if (wallHitNumber > 0)
@@ -92,7 +107,7 @@ public class Bullet : MonoBehaviour
             {
             }
 
-            //gameObject.SetActive(false);
+            gameObject.SetActive(false);
 
         }
         

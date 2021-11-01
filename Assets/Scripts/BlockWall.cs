@@ -15,31 +15,19 @@ public enum BlockState
 public class BlockWall : MonoBehaviour
 {
     Transform trans;
-
     public int targetScale = 1;
     public float blockSpeed = .6f;
     public float unblockSpeed = .2f;
-
     public ParticleSystem explode;
-
     public BlockState state = BlockState.blocked;
-
- 
     public bool autoBlock = false;
-
-    
-
-     
-     
 
     private void Start()
     {
         trans = transform;
         trans.localScale = state == BlockState.blocked ? new Vector3(1, targetScale, 1) : new Vector3(1, .0f, 1);
         if (autoBlock) StartCoroutine(Block());
-         
     }
-
     public IEnumerator Block()
     {
         if(state == BlockState.unblocked)
@@ -58,11 +46,5 @@ public class BlockWall : MonoBehaviour
             state = BlockState.unblocked;
         }
     }
-
-   
-     
-
-
-
 
 }

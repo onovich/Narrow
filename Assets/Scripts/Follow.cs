@@ -4,7 +4,7 @@ using UnityEngine;
 using DG.Tweening;
 
 
-public class CameraFollow : MonoBehaviour
+public class Follow : MonoBehaviour
 {
     public bool followPlayer = true;
 
@@ -17,10 +17,12 @@ public class CameraFollow : MonoBehaviour
     }
 
     Transform player;
+    float originalZ;
 
     private void Start()
     {
         player = Global.instance.player.transform;
+        originalZ = transform.position.z;
     }
 
     void FollowPlayer()
@@ -30,7 +32,7 @@ public class CameraFollow : MonoBehaviour
 
     public void FollowTarget(Transform target)
     {
-        transform.localPosition = new Vector3(target.position.x, target.position.y, -10);
+        transform.localPosition = new Vector3(target.position.x, target.position.y, originalZ);
     }
 
     public void MovesTo(Vector3 target,float duration)

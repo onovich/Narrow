@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using deVoid.Utils;
 using UnityEngine;
+using DG.Tweening;
 
-  
+
 public class CameraShake : MonoBehaviour
 {
     Vector3 originalCameraPos;
+    Color originalColor;
 
     #region Singleton
     public static CameraShake instance;
@@ -21,6 +23,7 @@ public class CameraShake : MonoBehaviour
     private void Start()
     {
         originalCameraPos = Vector3.zero;
+        originalColor = Camera.main.backgroundColor;
     }
 
     IEnumerator DOShake()
@@ -40,8 +43,37 @@ public class CameraShake : MonoBehaviour
 
 
 
+    public void FlashRed()
+    {
+        StopCoroutine(DoFlashRed());
+        StopCoroutine(DoFlashWhite());
+        StartCoroutine(DoFlashRed());
 
+    }
 
+    public void FlashWhite()
+    {
+        StopCoroutine(DoFlashRed());
+        StopCoroutine(DoFlashWhite());
+        StartCoroutine(DoFlashWhite());
+
+    }
+
+    public Color red;
+    public Color white;
+
+    IEnumerator DoFlashWhite()
+    {
+        Tween tweener = Camera.main.DOColor(white, .1f);
+        yield return tweener.WaitForCompletion();
+        Camera.main.DOColor(originalColor, .1f);
+    }
+    IEnumerator DoFlashRed()
+    {
+        Tween tweener = Camera.main.DOColor(red, .1f);
+        yield return tweener.WaitForCompletion();
+        Camera.main.DOColor(originalColor, .1f);
+    }
 
 
 

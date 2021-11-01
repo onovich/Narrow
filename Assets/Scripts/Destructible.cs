@@ -19,6 +19,7 @@ public class Destructible : MonoBehaviour
         sprite = GetComponent<SpriteRenderer>();
     }
 
+    /*
     private void OnCollisionEnter2D(Collision2D collision)
     {
         Attack attack = collision.gameObject.GetComponent<Attack>();
@@ -29,6 +30,7 @@ public class Destructible : MonoBehaviour
         }
         
     }
+    */
 
     public ParticleSystem flash;
 
@@ -38,23 +40,28 @@ public class Destructible : MonoBehaviour
         flash.Play();
     }
     */
-    
+    public bool OnAttack;
     IEnumerator Flash()
     {
+        OnAttack = true;
         //Debug.Log("闪烁");
+        //flash.Play();
         Tween tweener = sprite.DOColor(new Color(1,1,1,.5f),.2f);
         //Tween tweener = sprite.DOBlendableColor(new Color(255, 255, 255, 0), 1f);
         yield return tweener.WaitForCompletion();
-        sprite.DOColor(new Color(1,1,1,1), .1f);
+        Tween tweener2 = sprite.DOColor(new Color(1,1,1,1), .1f);
+        yield return tweener2.WaitForCompletion();
+        OnAttack = false;
+
     }
-    
+
 
     void Destroy()
     {
 
     }
 
-    void GetHurt(float attackValue)
+    public void GetHurt(float attackValue)
     {
         
         if (harmful)
