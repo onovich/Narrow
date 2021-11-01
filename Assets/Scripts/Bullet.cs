@@ -107,10 +107,11 @@ public class Bullet : MonoBehaviour
         if (playerHitNumber > 0)
         {
             
-            gameObject.SetActive(false);
             playerHits[0].collider.gameObject.GetComponent<Destructible>().GetHurt(GetComponent<Attack>().attackValue);
             //CameraShake.instance.FlashRed();
             CameraShake.instance.Shake();
+            gameObject.SetActive(false);
+
 
 
         }
@@ -118,11 +119,13 @@ public class Bullet : MonoBehaviour
         {
             
             BlockWall blockWall = wallHits[0].collider.gameObject.GetComponent<BlockWall>();
-            if (blockWall)
+            if ((blockWall.GetComponent<ColliderReactor>()!=null)&&(blockWall.GetComponent<ColliderReactor>().destoryBullet))
             {
+                gameObject.SetActive(false);
+                CameraShake.instance.Shake();
+                gameObject.SetActive(false);
             }
 
-            gameObject.SetActive(false);
 
         }
         
