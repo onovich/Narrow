@@ -18,7 +18,7 @@ public class TimeController : MonoBehaviour
         if (Input.GetKey(KeyCode.LeftShift))
         {
             Debug.Log("时间变慢");
-            Time.timeScale = Mathf.Lerp(Time.timeScale, .1f, .05f);
+            Time.timeScale = Mathf.Lerp(Time.timeScale, .4f, .05f);
             //Time.timeScale = 0;
         }
         if (Input.GetKeyUp(KeyCode.LeftShift))

@@ -17,6 +17,10 @@ public class Destructible : MonoBehaviour
     {
         hp = maxhp;
         sprite = GetComponent<SpriteRenderer>();
+        //tweener.SetAutoKill(false);
+        //tweener.SetRecyclable(true);
+        //tweener2.SetAutoKill(false);
+        //tweener2.SetRecyclable(true); 
     }
 
     /*
@@ -41,16 +45,42 @@ public class Destructible : MonoBehaviour
     }
     */
     public bool OnAttack;
+    Tween tweener;
+    Tween tweener2;
     IEnumerator Flash()
     {
         OnAttack = true;
         //Debug.Log("闪烁");
         //flash.Play();
-        Tween tweener = sprite.DOColor(new Color(1,1,1,.5f),.2f);
+        if (tweener == null)
+        {
+            //tweener.SetAutoKill(false);
+            tweener = sprite.DOColor(new Color(1, 1, 1, .5f), .2f);
+            tweener.SetAutoKill(false);
+            yield return tweener.WaitForCompletion();
+
+        }
+        else
+        {
+            tweener.Restart();
+            yield return tweener.WaitForCompletion();
+
+        }
         //Tween tweener = sprite.DOBlendableColor(new Color(255, 255, 255, 0), 1f);
-        yield return tweener.WaitForCompletion();
-        Tween tweener2 = sprite.DOColor(new Color(1,1,1,1), .1f);
-        yield return tweener2.WaitForCompletion();
+        if (tweener2 == null)
+        {
+            //tweener2.SetAutoKill(false);
+            tweener2 = sprite.DOColor(new Color(1, 1, 1, 1), .1f);
+            tweener2.SetAutoKill(false);
+            yield return tweener2.WaitForCompletion();
+
+        }
+        else
+        {
+            tweener2.Restart();
+            yield return tweener2.WaitForCompletion();
+
+        }
         OnAttack = false;
 
     }

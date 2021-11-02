@@ -228,9 +228,12 @@ public class PlayerMovement : MonoBehaviour
                 //除重
                 if(trans.localScale != speedUpScale)
                 {
-                    //trans.localScale = Vector3.Lerp(trans.localScale, speedUpScale, .1f);
-                    trans.DOScale(speedUpScale,.5f);
-                    trail.DOResize(trailWidthScale, .01f, .5f);
+                    trans.localScale = Vector3.Lerp(trans.localScale, speedUpScale, .1f);
+                    trail.startWidth = Mathf.Lerp(trail.startWidth,trailWidthScale,.1f);
+
+                    //trans.DOScale(speedUpScale,.5f);
+                    //DOTween.Init(true, true, LogBehaviour.Verbose).SetCapacity(200, 10);
+                    //trail.DOResize(trailWidthScale, .01f, .5f);
 
                 }
             }
@@ -242,10 +245,10 @@ public class PlayerMovement : MonoBehaviour
                 //除重
                 if (trans.localScale != Vector3.one)
                 {
-                    //trans.localScale = Vector3.Lerp(trans.localScale, speedUpScale, .1f);
-                    trans.DOScale(Vector3.one, .5f);
-                    trail.DOResize(trailWidth, .01f, .5f);
-
+                    //trans.DOScale(Vector3.one, .5f);
+                    //trail.DOResize(trailWidth, .01f, .5f);
+                    trans.localScale = Vector3.Lerp(trans.localScale, Vector3.one, .1f);
+                    trail.startWidth = Mathf.Lerp(trail.startWidth, trailWidth, .1f);
 
                 }
 
