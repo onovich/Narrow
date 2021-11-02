@@ -124,6 +124,8 @@ public class Parry : MonoBehaviour
                 parrySprite.transform.DOScale(new Vector3(1.4f, 1.4f, 1), .1f);
                 yield return tweener.WaitForCompletion();
                 parrySprite.transform.localScale = new Vector3(.5f, .5f, 1);
+                yield return new WaitForSeconds(.2f);
+
                 parryCold = false;
 
 

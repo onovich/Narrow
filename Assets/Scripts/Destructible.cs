@@ -51,7 +51,7 @@ public class Destructible : MonoBehaviour
     {
         OnAttack = true;
         //Debug.Log("闪烁");
-        //flash.Play();
+        flash.Play();
         if (tweener == null)
         {
             //tweener.SetAutoKill(false);
@@ -98,8 +98,7 @@ public class Destructible : MonoBehaviour
         {
             StopCoroutine(Flash());
             StartCoroutine(Flash());
-            //Flash();
-
+ 
             hp -= attackValue;
             if ((destroyable)&&(hp <= 0))
             {

@@ -40,7 +40,7 @@ public class Bullet : MonoBehaviour
     SpriteRenderer sprite;
 
     public GameObject trail;
-
+    TrailRenderer trailRenderer;
     RaycastCreater raycastCreater;
 
     void Awake()
@@ -48,6 +48,7 @@ public class Bullet : MonoBehaviour
         trans = transform;
         rigid = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
+        trailRenderer = trail.GetComponent<TrailRenderer>();
         SetDir(direction);
 
          
@@ -80,7 +81,8 @@ public class Bullet : MonoBehaviour
         CameraShake.instance.Shake();
         sprite.enabled = false;
         trans.position = dustbinPlace;
-    }
+        trailRenderer.Clear();
+     }
 
 
     // Update is called once per frame
