@@ -70,6 +70,19 @@ public class Bullet : MonoBehaviour
     }
 
 
+    Vector3 dustbinPlace = new Vector3(20,20,0);
+
+
+    void Hit(GameObject hit)
+    {
+        Debug.Log("击中" + hit.name);
+        hit.GetComponent<Destructible>().GetHurt(GetComponent<Attack>().attackValue);
+        CameraShake.instance.Shake();
+        sprite.enabled = false;
+        trans.position = dustbinPlace;
+    }
+
+
     // Update is called once per frame
     void Update()
     {
@@ -87,18 +100,14 @@ public class Bullet : MonoBehaviour
             {
                 if (ifRebound)
                 {
-                    Debug.Log("击中" + hit.name);
-                    hit.GetComponent<Destructible>().GetHurt(GetComponent<Attack>().attackValue);
-                    CameraShake.instance.Shake();
-                    sprite.enabled = false;
+                    Hit(hit);
+                   
                 }
             }
             else if (destructible.harmful)
             {
-                Debug.Log("击中" + hit.name);
-                hit.GetComponent<Destructible>().GetHurt(GetComponent<Attack>().attackValue);
-                CameraShake.instance.Shake();
-                sprite.enabled = false;
+                Hit(hit);
+                
             }
             
            
