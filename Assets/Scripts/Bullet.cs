@@ -8,6 +8,7 @@ public class Bullet : MonoBehaviour
 
     private void OnEnable()
     {
+        sprite.enabled = true;
         trail.SetActive(false);
         ifRebound = false;
         trail.GetComponent<TrailRenderer>().Clear();
@@ -27,36 +28,30 @@ public class Bullet : MonoBehaviour
     public float speed = 5f;
     Rigidbody2D rigid;
 
-    private LayerMask player;
-    private LayerMask wall;
-    ContactFilter2D playerFilter;
-    ContactFilter2D wallFilter;
+    //private LayerMask player;
+    //private LayerMask wall;
+    private LayerMask harmful;
+    //ContactFilter2D playerFilter;
+    //ContactFilter2D wallFilter;
+    ContactFilter2D filter;
 
     Transform trans;
- 
+
+    SpriteRenderer sprite;
+
     public GameObject trail;
 
-    void Start()
+    RaycastCreater raycastCreater;
+
+    void Awake()
     {
         trans = transform;
         rigid = GetComponent<Rigidbody2D>();
+        sprite = GetComponent<SpriteRenderer>();
         SetDir(direction);
 
-        player = LayerMask.GetMask("player");
-        wall = LayerMask.GetMask("OBB");
-
-        playerFilter = new ContactFilter2D
-        {
-            useLayerMask = true,
-            useTriggers = false,
-            layerMask = player,
-        };
-        wallFilter = new ContactFilter2D
-        {
-            useLayerMask = true,
-            useTriggers = false,
-            layerMask = wall,
-        };
+         
+        raycastCreater = new RaycastCreater(trans);
 
     }
 
@@ -69,9 +64,7 @@ public class Bullet : MonoBehaviour
         Vector3 normalSpeed = (new Vector3(direction, 0, 0)).normalized * speed;
         if (normalSpeed != Vector3.zero)
         {
-            //rigid.velocity += (Vector2)normalSpeed * speed * Time.smoothDeltaTime;
-            rigid.velocity += (Vector2)normalSpeed * speed * Time.deltaTime;
-
+             rigid.velocity += (Vector2)normalSpeed * speed * Time.deltaTime;
 
         }
     }
@@ -80,54 +73,41 @@ public class Bullet : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*
-        Vector3 normalSpeed = (new Vector3(direction, 0, 0)).normalized * speed ; 
-        if (normalSpeed != Vector3.zero)
+
+         float dis = .12f;
+ 
+
+        GameObject hit = raycastCreater.Raycast("harmful",5, direction,dis);
+ 
+        if (hit!=null)
         {
-            //rigid.velocity += (Vector2)normalSpeed * speed * Time.smoothDeltaTime;
-            rigid.velocity += (Vector2)normalSpeed * speed * Time.deltaTime;
-
-
-        }
-        */
-
-        RaycastHit2D[] playerHits = new RaycastHit2D[36];
-        RaycastHit2D[] wallHits = new RaycastHit2D[36];
-
-        float playerDis = .08f;
-        float wallDis = .08f;
-
-        Vector2 bulletOffset = direction > 0 ? trans.right : -trans.right;
-        int playerHitNumber = Physics2D.Raycast(trans.position, bulletOffset * playerDis, playerFilter, playerHits, playerDis);
-        int wallHitNumber = Physics2D.Raycast(trans.position, bulletOffset * wallDis, wallFilter, wallHits, wallDis);
-
-        
-
-        
-        if (playerHitNumber > 0)
-        {
-            
-            playerHits[0].collider.gameObject.GetComponent<Destructible>().GetHurt(GetComponent<Attack>().attackValue);
-            //CameraShake.instance.FlashRed();
-            CameraShake.instance.Shake();
-            gameObject.SetActive(false);
-
-
-
-        }
-        if (wallHitNumber > 0)
-        {
-            
-            BlockWall blockWall = wallHits[0].collider.gameObject.GetComponent<BlockWall>();
-            if ((blockWall.GetComponent<ColliderReactor>()!=null)&&(blockWall.GetComponent<ColliderReactor>().destoryBullet))
+            Destructible destructible = hit.GetComponent<Destructible>();
+            Fort fort = hit.GetComponent<Fort>();
+            if (fort != null)
             {
-                gameObject.SetActive(false);
-                CameraShake.instance.Shake();
-                gameObject.SetActive(false);
+                if (ifRebound)
+                {
+                    Debug.Log("击中" + hit.name);
+                    hit.GetComponent<Destructible>().GetHurt(GetComponent<Attack>().attackValue);
+                    CameraShake.instance.Shake();
+                    sprite.enabled = false;
+                }
             }
-
-
+            else if (destructible.harmful)
+            {
+                Debug.Log("击中" + hit.name);
+                hit.GetComponent<Destructible>().GetHurt(GetComponent<Attack>().attackValue);
+                CameraShake.instance.Shake();
+                sprite.enabled = false;
+            }
+            
+           
         }
+        else
+        {
+            //Debug.Log("未击中");
+        }
+
         
 
     }

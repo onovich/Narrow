@@ -331,7 +331,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1fa324e6080b4d2aa5fad942dc1d674, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  followPlayer: 0
+  followPlayer: 1
 --- !u!114 &146089043
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16548,7 +16548,7 @@ GameObject:
   - component: {fileID: 1572888357}
   - component: {fileID: 1572888358}
   - component: {fileID: 1572888359}
-  m_Layer: 10
+  m_Layer: 18
   m_Name: player
   m_TagString: player
   m_Icon: {fileID: 0}
@@ -36806,7 +36806,8 @@ GameObject:
   - component: {fileID: 2131150205}
   - component: {fileID: 2131150204}
   - component: {fileID: 2131150203}
-  m_Layer: 0
+  - component: {fileID: 2131150208}
+  m_Layer: 18
   m_Name: whiteFort
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -36970,6 +36971,23 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &2131150208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2131150200}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 406703ff1f7a844de9f830ee921683e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxhp: 0
+  harmful: 1
+  destroyable: 0
+  flash: {fileID: 0}
+  OnAttack: 0
 --- !u!1 &2132004156
 GameObject:
   m_ObjectHideFlags: 0

@@ -116,15 +116,15 @@ public class Parry : MonoBehaviour
             //盾反落空
             if (!reboundSuccess)
             {
+                onParry = false;
+                colliderReactor.destoryBullet = true;
+                destructible.harmful = true;
 
                 Tween tweener = parrySprite.DOColor(new Color(1, 1, 1, 0), .1f);
                 parrySprite.transform.DOScale(new Vector3(1.4f, 1.4f, 1), .1f);
                 yield return tweener.WaitForCompletion();
-                destructible.harmful = true;
-                colliderReactor.destoryBullet = true;
                 parrySprite.transform.localScale = new Vector3(.5f, .5f, 1);
                 parryCold = false;
-                onParry = false;
 
 
             }
@@ -133,33 +133,25 @@ public class Parry : MonoBehaviour
             {
                 //Debug.Log("盾反成功");
                 parrySprite.sprite = parryBlack;
-                Tween tweener4 = parrySprite.transform.DOScale(new Vector3(1.6f, 1.6f, 1), .1f);
+                 parrySprite.transform.DOScale(new Vector3(1.6f, 1.6f, 1), .1f);
                 Tween tweener2 = parrySprite.DOColor(new Color(1, 1, 1, 0), .1f);
                  
               
                 player.color = new Color(1, 1, 1, 1f);
                 yield return tweener2.WaitForCompletion();
-                yield return tweener4.WaitForCompletion();
 
-
-                //parrySprite.transform.localScale = new Vector3(.5f, .5f, 1);
-                //Debug.Log("盾反完成"+ parrySprite.transform.localScale);
+                 
 
                 destructible.harmful = true;
-                colliderReactor.destoryBullet = true;
-                //parryField.parrySuccess = false;
-                //Debug.Log("盾反检查1" + parrySprite.transform.localScale);
+                colliderReactor.destoryBullet = true; 
 
                 yield return new WaitForSeconds(.2f);
                 parrySprite.transform.localScale = new Vector3(.5f, .5f, 1);
-                //Debug.Log("盾反检查2" + parrySprite.transform.localScale);
-
+ 
                 parryCold = false;
-                //Debug.Log("盾反检查3" + parrySprite.transform.localScale);
-
+ 
                 onParry = false;
-                //Debug.Log("盾反检查4" + parrySprite.transform.localScale);
-
+ 
             }
 
 

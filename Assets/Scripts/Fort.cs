@@ -5,7 +5,7 @@ using DG.Tweening;
 
 
 [RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D),typeof(BlockWall))]
-[RequireComponent(typeof(BulletManager))]
+[RequireComponent(typeof(BulletManager),typeof(Destructible))]
 public class Fort : MonoBehaviour
 {
     public GameObject bulletPos;
@@ -25,7 +25,7 @@ public class Fort : MonoBehaviour
     IEnumerator Shooting()
     {
         yield return new WaitUntil(() => block.state == BlockState.blocked);
-
+        yield return new WaitForSeconds(.5f);
         while (true)
         {
             Shoot();
