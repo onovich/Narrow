@@ -28,20 +28,29 @@ public class Fort : MonoBehaviour
         yield return new WaitForSeconds(.5f);
         while (true)
         {
-            Shoot();
+            StartCoroutine(Shoot());
             yield return new WaitForSeconds(1f);
         }
     }
-
-    public void Shoot()
+    Tween tweener;
+    public IEnumerator Shoot()
     {
-        transform.DOPunchScale(Vector3.one*.1f,.2f);
-     
-       
+        if (tweener == null)
+        {
+            tweener = transform.DOPunchScale(Vector3.one * .1f, .2f);
+            tweener.SetAutoKill(false);
+        }
+        else
+        {
+            tweener.Restart();
+        }
+        yield return tweener.WaitForCompletion();
+
 
 
         GameObject bullet = GameObjectPoolManager.instance.GetInstance("BulletPool", bulletPos.transform.position, 10);
         bullet.GetComponent<Bullet>().SetDir(this.direction);
+          
     }
 
 }

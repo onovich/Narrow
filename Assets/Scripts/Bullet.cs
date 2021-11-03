@@ -42,16 +42,14 @@ public class Bullet : MonoBehaviour
     public GameObject trail;
     TrailRenderer trailRenderer;
     RaycastCreater raycastCreater;
-
-    void Awake()
+     void Awake()
     {
         trans = transform;
         rigid = GetComponent<Rigidbody2D>();
         sprite = GetComponent<SpriteRenderer>();
         trailRenderer = trail.GetComponent<TrailRenderer>();
         SetDir(direction);
-
-         
+          
         raycastCreater = new RaycastCreater(trans);
 
     }
@@ -62,11 +60,11 @@ public class Bullet : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Vector3 normalSpeed = (new Vector3(direction, 0, 0)).normalized * speed;
+         Vector3 normalSpeed = (new Vector3(direction, 0, 0)).normalized * speed;
         if (normalSpeed != Vector3.zero)
         {
              rigid.velocity += (Vector2)normalSpeed * speed * Time.deltaTime;
-
+            
         }
     }
 

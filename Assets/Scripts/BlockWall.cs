@@ -19,21 +19,34 @@ public class BlockWall : MonoBehaviour
     public float blockSpeed = .6f;
     public float unblockSpeed = .2f;
     public ParticleSystem explode;
-    public BlockState state = BlockState.blocked;
+    public BlockState state = BlockState.unblocked;
     public bool autoBlock = false;
-
+    Tween tweener1;
+    Tween tweener2;
     private void Start()
     {
         trans = transform;
         trans.localScale = state == BlockState.blocked ? new Vector3(1, targetScale, 1) : new Vector3(1, .0f, 1);
-        if (autoBlock) StartCoroutine(Block());
+        if (autoBlock)
+        {
+            state = BlockState.unblocked;
+            StartCoroutine(Block());
+        }
     }
     public IEnumerator Block()
     {
         if(state == BlockState.unblocked)
         {
-            Tween tweener = trans.DOScaleY(targetScale, blockSpeed);
-            yield return tweener.WaitForCompletion();
+            if (tweener1 == null)
+            {
+                tweener1 = trans.DOScaleY(targetScale, blockSpeed);
+                tweener1.SetAutoKill(false);
+            }
+            else
+            {
+                tweener1.Restart();
+            }
+            yield return tweener1.WaitForCompletion();
             state = BlockState.blocked;
         }
     }
@@ -41,8 +54,16 @@ public class BlockWall : MonoBehaviour
     {
         if (state == BlockState.blocked)
         {
-            Tween tweener = trans.DOScaleY(0, unblockSpeed);
-            yield return tweener.WaitForCompletion();
+            if (tweener2 == null)
+            {
+                tweener2 = trans.DOScaleY(0, unblockSpeed);
+                tweener2.SetAutoKill(false);
+            }
+            else
+            {
+                tweener2.Restart();
+            }
+            yield return tweener2.WaitForCompletion();
             state = BlockState.unblocked;
         }
     }
