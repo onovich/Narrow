@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
+[RequireComponent(typeof(BoxCollider2D))]
 public class Destructible : MonoBehaviour
 {
     [Range(0,10)]
@@ -13,37 +14,31 @@ public class Destructible : MonoBehaviour
     public bool harmful = false;
     public bool destroyable = false;
     SpriteRenderer sprite;
+    TrailRenderer trail;
+    bool ifPlayer;
+    PlayerMovement playerMovement;
+    BoxCollider2D boxCollider;
+
     private void Start()
     {
         hp = maxhp;
         sprite = GetComponent<SpriteRenderer>();
-        //tweener.SetAutoKill(false);
-        //tweener.SetRecyclable(true);
-        //tweener2.SetAutoKill(false);
-        //tweener2.SetRecyclable(true); 
+        ifPlayer = gameObject.CompareTag("player") ? true : false;
+        if (ifPlayer)
+        {
+            playerMovement = GetComponent<PlayerMovement>();
+            trail = playerMovement.trail.GetComponent<TrailRenderer>();
+
+        }
+        boxCollider = GetComponent<BoxCollider2D>();
+
     }
 
-    /*
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        Attack attack = collision.gameObject.GetComponent<Attack>();
-        //存在攻击对象时
-        if (attack!=null)
-        {
-            GetHurt(attack.attackValue);
-        }
-        
-    }
-    */
+
 
     public ParticleSystem flash;
-
-    /*
-    void Flash()
-    {
-        flash.Play();
-    }
-    */
+    public ParticleSystem explore;
+ 
     public bool OnAttack;
     Tween tweener;
     Tween tweener2;
@@ -54,8 +49,7 @@ public class Destructible : MonoBehaviour
         flash.Play();
         if (tweener == null)
         {
-            //tweener.SetAutoKill(false);
-            tweener = sprite.DOColor(new Color(1, 1, 1, .5f), .2f);
+             tweener = sprite.DOColor(new Color(1, 1, 1, .5f), .2f);
             tweener.SetAutoKill(false);
             yield return tweener.WaitForCompletion();
 
@@ -66,11 +60,9 @@ public class Destructible : MonoBehaviour
             yield return tweener.WaitForCompletion();
 
         }
-        //Tween tweener = sprite.DOBlendableColor(new Color(255, 255, 255, 0), 1f);
-        if (tweener2 == null)
+         if (tweener2 == null)
         {
-            //tweener2.SetAutoKill(false);
-            tweener2 = sprite.DOColor(new Color(1, 1, 1, 1), .1f);
+             tweener2 = sprite.DOColor(new Color(1, 1, 1, 1), .1f);
             tweener2.SetAutoKill(false);
             yield return tweener2.WaitForCompletion();
 
@@ -86,9 +78,28 @@ public class Destructible : MonoBehaviour
     }
 
 
-    void Destroy()
+    IEnumerator Explore()
     {
+        
+        explore.Play();
+        yield return new WaitForSeconds(.2f);
+        sprite.enabled = false;
+        if (ifPlayer)
+        {
+            trail.enabled = false;
+        }
 
+        boxCollider.enabled = false;
+        yield return new WaitForSeconds(.2f);
+        Destroy(gameObject);
+
+    }
+    void RefreshTrail()
+    {
+        if (maxhp > 0)
+        {
+            trail.time = playerMovement.trailTime * hp / maxhp;
+        }
     }
 
     public void GetHurt(float attackValue)
@@ -98,11 +109,17 @@ public class Destructible : MonoBehaviour
         {
             StopCoroutine(Flash());
             StartCoroutine(Flash());
+            if (ifPlayer)
+            {
+                Debug.Log("确实是player");
+                RefreshTrail();
+            }
  
             hp -= attackValue;
             if ((destroyable)&&(hp <= 0))
             {
-                Destroy();
+                StartCoroutine(Explore());
+
             }
         }
 

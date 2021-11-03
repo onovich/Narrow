@@ -90,7 +90,7 @@ public class Bullet : MonoBehaviour
          float dis = .12f;
  
 
-        GameObject hit = raycastCreater.Raycast("harmful",5, direction,dis);
+        GameObject hit = raycastCreater.Raycast("harmful",5, direction,dis,false);//ignoreSelf选false是因为考虑到会被发射出的子弹再反弹后伤害
  
         if (hit!=null)
         {

@@ -15,8 +15,8 @@ public class PlayerMovement : MonoBehaviour
     [HideInInspector]
     public bool movable = true;
     public PlayerSetting setting;
-
-    private float Horizontal;
+    [HideInInspector]
+    public float Horizontal;
     private Vector3 normalSpeed;
     private float speed{ get{return setting.moveSpeed; } }
 
@@ -29,11 +29,16 @@ public class PlayerMovement : MonoBehaviour
     private float trailWidth { get { return setting.trailWidth; } }
     private float trailWidthScale { get { return setting.trailWidthScale; } }
 
-    private Transform waveTrans;
+    [HideInInspector]
+    public float trailTime = .4f;
+
+    //private Transform waveTrans;
 
     ContactFilter2D filter;
     private LayerMask wall;
 
+    [HideInInspector]
+    public int direction = 0;
 
     public int hitNumber = 0;
  
@@ -42,8 +47,8 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         trans = transform;
-        waveTrans = wave.transform;
-        waveOriginalPos = waveTrans.localPosition;
+        //waveTrans = wave.transform;
+        //waveOriginalPos = waveTrans.localPosition;
         wall = LayerMask.GetMask("OBB");
 
         filter = new ContactFilter2D
@@ -63,7 +68,7 @@ public class PlayerMovement : MonoBehaviour
 
     public ParticleSystem particle;
 
-    public SpriteRenderer wave;
+    //public SpriteRenderer wave;
 
     /*
     IEnumerator CameraShake()
@@ -84,9 +89,7 @@ public class PlayerMovement : MonoBehaviour
 
     void onCollide(GameObject collision)
     {
-        CameraShake.instance.Shake();
-        //StopCoroutine(CameraShake());
-        //StartCoroutine(CameraShake());
+        CameraShake.instance.Shake(); 
 
         if (collision.CompareTag("npc"))
         {
@@ -126,7 +129,7 @@ public class PlayerMovement : MonoBehaviour
 
     bool stop = true;
     Vector3 waveOriginalPos;
-    float waveOffset = 1;
+    //float waveOffset = 1;
 
 
 
@@ -135,34 +138,19 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        //Debug.Log("当前速度="+rigid.velocity+",Time:"+Time.time);
-
-
-        
-
-      
-        /* 
-        if ((onParry)&&(bulletReboundHitNumber > 0))
-        {
-             
-            Rebound(bulletReboundHits[0].collider.GetComponent<Bullet>());
-
-        }
-        */
-
-
+         
         if (Input.GetKey(KeyCode.D))
         {
-            waveOffset = 1;
-            waveTrans.localPosition = waveOriginalPos * waveOffset;
+            //waveOffset = 1;
+            //waveTrans.localPosition = waveOriginalPos * waveOffset;
         }
         if (Input.GetKey(KeyCode.A))
         {
-            waveOffset = -1;
-            waveTrans.localPosition = waveOriginalPos * waveOffset;
+            //waveOffset = -1;
+            //waveTrans.localPosition = waveOriginalPos * waveOffset;
         }
 
-        waveTrans.localScale = new Vector3(waveOffset, 1/trans.localScale.y,1); 
+        //waveTrans.localScale = new Vector3(waveOffset, 1/trans.localScale.y,1); 
 
          
 
@@ -170,13 +158,13 @@ public class PlayerMovement : MonoBehaviour
         if ((Mathf.Abs(rigid.velocity.x) >= 2f)&&(Input.GetKey(KeyCode.A)||Input.GetKey(KeyCode.D)))
         {
             //wave.DOColor(new Color(255,255,255,255),1f);
-            wave.color = Color.Lerp(wave.color, new Color(255, 255, 255, 255), .01f);
+            //wave.color = Color.Lerp(wave.color, new Color(255, 255, 255, 255), .01f);
         }
 
         else
         {
             //wave.DOColor(new Color(255, 255, 255, 0), .1f);
-            wave.color = Color.Lerp(wave.color, new Color(255, 255, 255, 0), .1f);
+            //wave.color = Color.Lerp(wave.color, new Color(255, 255, 255, 0), .1f);
 
         }
 
@@ -207,6 +195,8 @@ public class PlayerMovement : MonoBehaviour
             {
                 //角色移动控制
                 Horizontal = Input.GetAxis("Horizontal");
+                direction = Horizontal > 0 ? 1 : -1;
+                if (Horizontal == 0) direction = 0;
                 normalSpeed = (new Vector3(Horizontal, 0, 0)).normalized;
                 if (normalSpeed != Vector3.zero)
                 {
@@ -231,9 +221,7 @@ public class PlayerMovement : MonoBehaviour
                     trans.localScale = Vector3.Lerp(trans.localScale, speedUpScale, .1f);
                     trail.startWidth = Mathf.Lerp(trail.startWidth,trailWidthScale,.1f);
 
-                    //trans.DOScale(speedUpScale,.5f);
-                    //DOTween.Init(true, true, LogBehaviour.Verbose).SetCapacity(200, 10);
-                    //trail.DOResize(trailWidthScale, .01f, .5f);
+                   
 
                 }
             }
@@ -245,8 +233,7 @@ public class PlayerMovement : MonoBehaviour
                 //除重
                 if (trans.localScale != Vector3.one)
                 {
-                    //trans.DOScale(Vector3.one, .5f);
-                    //trail.DOResize(trailWidth, .01f, .5f);
+                    
                     trans.localScale = Vector3.Lerp(trans.localScale, Vector3.one, .1f);
                     trail.startWidth = Mathf.Lerp(trail.startWidth, trailWidth, .1f);
 

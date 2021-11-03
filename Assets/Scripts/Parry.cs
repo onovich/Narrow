@@ -50,7 +50,7 @@ public class Parry : MonoBehaviour
             reboundSuccess = false;
             RaycastCreater raycast = new RaycastCreater(transform);
             //GameObject collider = raycast.Circlecast("harm", 1, .25f);
-            GameObject collider = raycast.Circlecast("harm", 1, .5f);
+            GameObject collider = raycast.Circlecast("harm", 1, .5f,true);
 
 
             parrySprite.transform.localScale = new Vector3(.5f, .5f, 1);

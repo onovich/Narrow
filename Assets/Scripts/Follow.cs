@@ -27,12 +27,19 @@ public class Follow : MonoBehaviour
 
     void FollowPlayer()
     {
-        FollowTarget(player);
+        if (player != null)
+        {
+            FollowTarget(player);
+
+        }
     }
 
     public void FollowTarget(Transform target)
     {
-        transform.localPosition = new Vector3(target.position.x, target.position.y, originalZ);
+        if (target != null)
+        {
+            transform.localPosition = new Vector3(target.position.x, target.position.y, originalZ);
+        }
     }
 
     public void MovesTo(Vector3 target,float duration)
