@@ -1,0 +1,153 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D))]
+public class MFortEntity : MonoBehaviour, IEnemy
+{
+    // 数据层
+    // 外部依赖
+    public DestructibleSetting destructibleSetting;
+    public MoveSetting moveSetting;
+    public FadeInSetting fadeInSetting;
+    public Transform bulletTrans;
+    public ParticleSystem hurtEffect;
+    public ParticleSystem deadEffect;
+    public ParticleSystem collideEffect;
+    [Range(-1,1)]
+    public int direction;
+    public bool hurtable = false;
+    public bool destroyable = false;
+
+    // 属性
+    public FadeState defaultFadeState = FadeState.beenOut;
+    public EnemyActiveState ActiveState { get; set; }
+    public Transform LockedTarget { get; set; }
+
+    // 行为层组件
+    public ICollideReactComponent collideReactComponent;
+    public IShootComponent shootComponent;
+    public IFadeInComponent fadeInComponent;
+    public IMoveComponent moveComponent;
+    public IDestructibleComponent destructibleComponent;
+    public IFortHoverComponent fortHoverComponent;
+    public IParryComponent parryComponent;
+
+    // 逻辑层
+    IFSM mFortFSM;
+    public StateID defaultState = StateID.Attack;
+    public StateID currentState = StateID.Attack;//状态指针
+
+    //--------------------------------------------------------------------------
+
+    /// 创建组件+注入依赖
+    public void Ctor()
+    {
+        //零级行为层
+        collideReactComponent = gameObject.AddComponent<CollideReactComponent>();
+        collideReactComponent.Ctor(direction,collideEffect,true);
+
+        //一级行为层
+        shootComponent = gameObject.AddComponent<ShootComponent>();
+        shootComponent.Ctor(bulletTrans,direction);
+
+        fadeInComponent = gameObject.AddComponent<FadeInComponent>();
+        fadeInComponent.Ctor(transform,fadeInSetting, defaultFadeState);
+
+        moveComponent = gameObject.AddComponent<MFortMoveComponent>();
+        moveComponent.Ctor();
+
+        destructibleComponent = gameObject.AddComponent<DestructibleComponent>();
+        destructibleComponent.Ctor(destructibleSetting,hurtable,destroyable,hurtEffect,deadEffect);
+
+
+        //二级行为层
+        fortHoverComponent = gameObject.AddComponent<MFortHoverComponent>();
+        fortHoverComponent.Ctor();
+
+        //逻辑层
+        defaultState = StateID.Start;
+        mFortFSM = new MFortFSM(this,defaultState);
+        //this.currentState = mFortFSM.currentState;
+    }
+
+    private void Awake()
+    {
+        Ctor();
+    }
+
+    //--------------------------------------------------------------------------
+
+    /// 行为层实现
+    /// 一级行为层
+    public void SetActive()
+    {
+        ActiveState = EnemyActiveState.active;
+    }
+    public void Stop()
+    {
+        ActiveState = EnemyActiveState.stop;
+    }
+    public void FadeIn()
+    {
+        fadeInComponent.FadeIn();
+    }
+    public void FadeOut()
+    {
+        fadeInComponent.FadeOut();
+    }
+    public void Attack()
+    {
+        shootComponent.Attack();
+    }
+    public void AttackOff()
+    {
+        shootComponent.Attack();
+    }
+    public void Move()
+    {
+        moveComponent.Move();
+    }
+    public void GetHurt(float attackValue)
+    {
+        destructibleComponent.GetHurt(attackValue);
+    }
+    public void Destroy()
+    {
+        destructibleComponent.Destroy();
+    }
+    /// 二级行为层
+    public void Hover()
+    {
+        
+    }
+    public bool Fatigue()
+    {
+        return fortHoverComponent.Fatigue();
+    }
+    public bool FadedIn()
+    {
+        return fadeInComponent.FadedIn();
+    }
+    public bool FadedOut()
+    {
+        return fadeInComponent.FadedOut();
+    }
+    /// 三级行为层
+    public bool TimeUp()
+    {
+        return FadedIn();
+    }
+
+
+    /// 逻辑层主循环
+    public void Update()
+    {
+        //状态机更新
+        mFortFSM.Update(this);
+        Debug.Log("当前状态"+currentState);
+
+
+    }
+
+}

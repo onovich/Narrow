@@ -5,10 +5,11 @@ public enum Transition
 {
     NullTransition = 0,
 
-    LostHear,//遗忘声音
-    Hear,//听见声音
+    TimeUp,//计时完成
     SeePlayer,//看见玩家
     LostPlayer,//跟丢玩家
+    Fatigue,//疲劳
+    Relocated,//完成重定位
 
 }
 
@@ -17,10 +18,10 @@ public enum StateID
 {
     NullStateID = 0,
 
+    Start,//初始化
     Pend,//待机
-    Seek,//搜索
-    Follow,//追踪
-    Patrol,//巡逻
+    Attack,//攻击
+    Hover,//徘徊
 }
 public abstract class FSMState 
 {
@@ -92,9 +93,9 @@ public abstract class FSMState
 
     public virtual void DoAfterLeaving() { }
 
-    public abstract void Act(GameObject npc);
+    public abstract void Act(IEnemy enemy);
 
-    public abstract void Reason(GameObject npc);
+    public abstract void Reason(IEnemy enemy);
 
 
 

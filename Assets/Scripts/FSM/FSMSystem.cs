@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+interface IFSM
+{
+    void Update(IEnemy enemy);
+    StateID currentState { get; set; }
+}
+
 public class FSMSystem 
 {
     private Dictionary<StateID, FSMState> states = new Dictionary<StateID, FSMState>();
@@ -10,10 +16,10 @@ public class FSMSystem
 
 
 
-    public void Update(GameObject npc)
+    public void Update(IEnemy enemy)
     {
-        currentFSMState.Act(npc);
-        currentFSMState.Reason(npc);
+        currentFSMState.Act(enemy);
+        currentFSMState.Reason(enemy);
     }
     
 
