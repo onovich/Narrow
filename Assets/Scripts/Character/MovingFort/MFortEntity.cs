@@ -27,6 +27,7 @@ public class MFortEntity : MonoBehaviour, IEnemy
     public FadeState defaultFadeState = FadeState.beenOut;
     public EnemyActiveState ActiveState { get; set; }
     public Transform LockedTarget { get; set; }
+    public int Direction { get { return direction; } set { direction = value; } }
 
     // 行为层组件
     public ICollideReactComponent collideReactComponent;
@@ -62,7 +63,7 @@ public class MFortEntity : MonoBehaviour, IEnemy
 
         //一级行为层
         shootComponent = gameObject.AddComponent<ShootComponent>();
-        shootComponent.Ctor(bulletTrans,direction);
+        shootComponent.Ctor(bulletTrans, this);
 
         fadeInComponent = gameObject.AddComponent<FadeInComponent>();
         fadeInComponent.Ctor(transform,fadeInSetting, defaultFadeState);

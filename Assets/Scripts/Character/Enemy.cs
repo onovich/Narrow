@@ -12,6 +12,7 @@ public interface IEnemy
 {
     EnemyActiveState ActiveState { get; set; }
     Transform LockedTarget { get; set; }
+    int Direction { get; set; }
     void Stop();
     void SetActive();
     void FadeIn();
@@ -33,6 +34,7 @@ public interface IEnemy
     void SetTrigger();
     void RemoveTrigger();
     void SetDir();
+
 
 }
 

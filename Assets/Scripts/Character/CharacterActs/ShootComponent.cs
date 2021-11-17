@@ -5,7 +5,7 @@ using DG.Tweening;
 
 public interface IShootComponent:IAttackComponent
 {
-    void Ctor(Transform bulletTrans, int direction);
+    void Ctor(Transform bulletTrans, IEnemy enemy);
 }
 
 public class ShootComponent : MonoBehaviour,IShootComponent
@@ -14,8 +14,9 @@ public class ShootComponent : MonoBehaviour,IShootComponent
     Transform bulletTrans;
 
     //对外接口
-    [Range(-1, 1)]
-    public int direction;
+    //[Range(-1, 1)]
+    //public int direction;
+    IEnemy enemy;
 
     //内部字段
     Tween tweener;
@@ -24,10 +25,11 @@ public class ShootComponent : MonoBehaviour,IShootComponent
     ///初始化
     ///获取依赖
     ///创建对象池
-    public void Ctor(Transform bulletTrans,int direction)
+    public void Ctor(Transform bulletTrans,IEnemy enemy)
     {
         this.bulletTrans = bulletTrans;
-        this.direction = direction;
+        //this.direction = direction;
+        this.enemy = enemy;
     }
 
     public void Ctor(float attackValue)
@@ -84,7 +86,7 @@ public class ShootComponent : MonoBehaviour,IShootComponent
         }
         yield return tweener.WaitForCompletion();
         GameObject bullet = GameObjectPoolManager.instance.GetInstance("BulletPool", bulletTrans.position, 10);
-        bullet.GetComponent<BulletEntity>().Ctor(this.direction);
+        bullet.GetComponent<BulletEntity>().Ctor(enemy.Direction);
     }
 
     

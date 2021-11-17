@@ -126,7 +126,7 @@ public class MFortSprintComponent : MonoBehaviour, IMFortSprintComponent
             normalSpeed = (new Vector3(direction, 0, 0)).normalized;
             //rigid.velocity += (Vector2)normalSpeed * speed * Time.smoothDeltaTime;
             //rigid.velocity = (Vector2)normalSpeed * speed * 40 * Time.smoothDeltaTime;
-            rigid.AddForce((Vector2)normalSpeed * speed * 40 * Time.smoothDeltaTime);
+            rigid.AddForce((Vector2)normalSpeed * speed * 200 * Time.smoothDeltaTime);
 
         }
         else
