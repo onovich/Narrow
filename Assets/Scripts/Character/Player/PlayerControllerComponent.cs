@@ -49,7 +49,7 @@ public class PlayerControllerComponent : IPlayerControllerComponent
         if (Input.GetKeyDown(KeyCode.LeftCommand))
         {
             OnDodgeControllerEvent?.Invoke();
-            //Debug.Log("获取闪避控制");
+            Debug.Log("获取闪避控制");
         }
         if (Input.GetKeyDown(KeyCode.Space))
         {

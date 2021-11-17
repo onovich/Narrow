@@ -48,7 +48,7 @@ public class DodgeComponent : MonoBehaviour, IDodgeComponent
         if (direction != 0)
         {
             StartCoroutine(Deliver(direction));
-            //Debug.Log("传送完成");
+            Debug.Log("传送完成:direction="+direction);
         }
     }
 

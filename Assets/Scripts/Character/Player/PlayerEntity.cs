@@ -33,6 +33,7 @@ public class PlayerEntity : MonoBehaviour, IPlayerEntity
     public bool OnMoving { get => playerMoveComponent.OnMoving; }
     public bool OnMovingController { get => playerMoveComponent.OnMovingController; }
 
+     
 
     // 属性
     public int Direction { get => playerMoveComponent.Direction; } 

@@ -42,8 +42,7 @@ public class PlayerMoveComponent :IPlayerMoveComponent
     // 属性
     float Horizontal => Input.GetAxis("Horizontal");
     //public int Direction { get { if (Horizontal > 0) return 1; else if (Horizontal < 0) return -1; else return 0; }}
-    int _direction = 0;
-    public int Direction { get { return _direction; } set { if (Input.GetKeyDown(KeyCode.A)) { value = -1;_direction = value; } if (Input.GetKeyDown(KeyCode.D)) { value = 1; _direction = value; } } }
+    public int Direction { get; set; } = 1;
 
 
     /// 初始化+获取依赖
@@ -86,7 +85,15 @@ public class PlayerMoveComponent :IPlayerMoveComponent
 
                 OnMoving = rigid.velocity == Vector2.zero ? false : true;
                 OnMovingController = Horizontal == 0 ? false : true;
-            }
+
+                if (Input.GetKey(KeyCode.A)) { Direction = -1; }
+                else if (Input.GetKey(KeyCode.D)) { Direction = 1; }
+                else Direction = 0;
+
+
+
+
+}
 
 
         }

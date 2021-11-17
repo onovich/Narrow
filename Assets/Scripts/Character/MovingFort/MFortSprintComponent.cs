@@ -47,15 +47,37 @@ public class MFortSprintComponent : MonoBehaviour, IMFortSprintComponent
         rigid.bodyType = RigidbodyType2D.Static;
     }
 
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collider2d.gameObject.layer == (LayerMask.NameToLayer("harmful")))
+        {
+         }
+        else
+        {
+
+         }
+
+    }
+
+
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collider2d.gameObject.layer == (LayerMask.NameToLayer("harmful")))
         {
             if (!OnAttack)
             {
+                DestructibleComponent destructibleComponent = collision.GetComponent<DestructibleComponent>();
+                if ((destructibleComponent != null) && (destructibleComponent.hurtable)) SprintHurt(collision.gameObject);
                 //发送伤害广播
             }
             OnAttack = true;
+ 
+        }
+        else
+        {
+ 
         }
     }
 
@@ -65,6 +87,11 @@ public class MFortSprintComponent : MonoBehaviour, IMFortSprintComponent
         if (collider2d.gameObject.layer == (LayerMask.NameToLayer("harmful")))
         {
             OnAttack = false;
+            collider2d.isTrigger = false;
+        }
+        else
+        {
+            //RemoveTrigger();
         }
     }
 
@@ -72,17 +99,16 @@ public class MFortSprintComponent : MonoBehaviour, IMFortSprintComponent
 
 
 
-
-
+    
+    
     bool Hit()
     {
         float dis = .5f;
         GameObject hit = raycastCreater.Raycast(5, mFort.direction, dis, true);
         if (hit != null)
         {
-            DestructibleComponent destructibleComponent = hit.GetComponent<DestructibleComponent>();
-           
-            if((destructibleComponent!=null)&&(destructibleComponent.hurtable)) SprintHurt(hit);
+            //DestructibleComponent destructibleComponent = hit.GetComponent<DestructibleComponent>();
+            //if((destructibleComponent!=null)&&(destructibleComponent.hurtable)) SprintHurt(hit);
 
             if(hit.gameObject.layer==(LayerMask.NameToLayer("harmful")))
             {
@@ -104,7 +130,7 @@ public class MFortSprintComponent : MonoBehaviour, IMFortSprintComponent
             return false;
         }
     }
-
+    
     
     public void Ctor(Transform trans,MFortEntity mFort,Rigidbody2D rigid,Collider2D collider)
     {
@@ -121,18 +147,22 @@ public class MFortSprintComponent : MonoBehaviour, IMFortSprintComponent
         int direction = mFort.direction;
         float speed = 10f;
         Vector3 normalSpeed;
+        
         if (!Hit())
         {
             normalSpeed = (new Vector3(direction, 0, 0)).normalized;
             //rigid.velocity += (Vector2)normalSpeed * speed * Time.smoothDeltaTime;
             //rigid.velocity = (Vector2)normalSpeed * speed * 40 * Time.smoothDeltaTime;
-            rigid.AddForce((Vector2)normalSpeed * speed * 200 * Time.smoothDeltaTime);
+            rigid.AddForce((Vector2)normalSpeed * speed * 1000 * Time.smoothDeltaTime);
 
         }
         else
         {
             mFort.direction *= -1;
         }
+        
+        //normalSpeed = (new Vector3(direction, 0, 0)).normalized;
+        //rigid.AddForce((Vector2)normalSpeed * speed * 800 * Time.smoothDeltaTime);
     }
 
     

@@ -23,7 +23,7 @@ public class MFortSprintState : FSMState
         if (enemy.IfRelocated())
         {
             enemy.StopSprint();
-            Debug.LogError("完成徘徊，切换状态");
+            //Debug.LogError("完成徘徊，切换状态");
             fsm.PerformTransition(Transition.Relocated);
         }
         //当满足xx条件后，触发重定位
