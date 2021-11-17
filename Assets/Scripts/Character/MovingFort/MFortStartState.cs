@@ -19,10 +19,10 @@ public class MFortStartState : FSMState
 
     public override void Reason(IEnemy enemy)
     {
-        if (enemy.TimeUp())
+        if (enemy.IfTimeUp())
         {
             fsm.PerformTransition(Transition.TimeUp);
         }
-        Debug.Log("满足条件，切换状态为Attack");
+       // Debug.Log("满足条件，切换状态为Attack");
     }
 }

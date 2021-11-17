@@ -21093,6 +21093,11 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 500619518807376301, guid: a5877b028078948638f41b80bb86a2e7,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1299202253132429395, guid: a5877b028078948638f41b80bb86a2e7,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -21365,6 +21370,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: whiteFort
       objectReference: {fileID: 0}
+    - target: {fileID: 3647161064712387598, guid: 5eef8246e74614ce080bebbeec9e140b,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5eef8246e74614ce080bebbeec9e140b, type: 3}
 --- !u!1001 &4027790721663776080
@@ -21443,6 +21453,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3037371437921235050, guid: 5e4d0b09ece714386a9704e65bc9ff80,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5712958847192755152, guid: 5e4d0b09ece714386a9704e65bc9ff80,
         type: 3}
       propertyPath: m_LocalPosition.x

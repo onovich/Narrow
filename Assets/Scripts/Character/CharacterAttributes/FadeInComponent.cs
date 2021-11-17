@@ -13,10 +13,11 @@ public interface IFadeInComponent
 {
     void FadeIn();
     void FadeOut();
+    void FadeOut(float targetY);
     void Ctor(Transform trans, FadeInSetting setting, FadeState state);
-    void Ctor(float targetY,Transform trans, FadeInSetting setting, FadeState state);
-    bool FadedIn();
-    bool FadedOut();
+    void Ctor(float defaultY, Transform trans, FadeInSetting setting, FadeState state);
+    bool IfFadedIn();
+    bool IfFadedOut();
 }
 
 public class FadeInComponent : MonoBehaviour,IFadeInComponent
@@ -24,7 +25,7 @@ public class FadeInComponent : MonoBehaviour,IFadeInComponent
     // 外部依赖
     Transform trans;
     FadeInSetting setting;
-    float targetY = 1;
+    float defaultY = 1;
     float fadeInSpeed;
     float fadeOutSpeed;
 
@@ -46,11 +47,13 @@ public class FadeInComponent : MonoBehaviour,IFadeInComponent
         this.fadeOutSpeed = setting.fadeOutSpeed;
         trans.localScale = state == FadeState.beenIn ? new Vector3(1, 1, 1) : new Vector3(1, .0f, 1);
     }
-    public void Ctor(float targetY, Transform trans, FadeInSetting setting, FadeState state)
+    
+    public void Ctor(float defaultY, Transform trans, FadeInSetting setting, FadeState state)
     {
-        this.targetY = targetY;
+        this.defaultY = defaultY;
         Ctor(trans, setting, state);
     }
+    
 
     /// 行为层实现
     /// 对外方法
@@ -63,19 +66,27 @@ public class FadeInComponent : MonoBehaviour,IFadeInComponent
         }
         
     }
-    public void FadeOut()
+    public void FadeOut(float targetY)
     {
         if ((!fading)&&(state == FadeState.beenIn))
         {
             fading = true;
-            StartCoroutine(FadingOut());
+            StartCoroutine(FadingOut(targetY));
         }
     }
-    public bool FadedIn()
+    public void FadeOut()
+    {
+        if ((!fading) && (state == FadeState.beenIn))
+        {
+            fading = true;
+            StartCoroutine(FadingOut(0));
+        }
+    }
+    public bool IfFadedIn()
     {
         return (state == FadeState.beenIn);
     }
-    public bool FadedOut()
+    public bool IfFadedOut()
     {
         return (state == FadeState.beenOut);
     }
@@ -86,7 +97,7 @@ public class FadeInComponent : MonoBehaviour,IFadeInComponent
          
             if (tweener1 == null)
             {
-                tweener1 = trans.DOScaleY(targetY, fadeInSpeed);
+                tweener1 = trans.DOScaleY(defaultY, fadeInSpeed);
                 tweener1.SetAutoKill(false);
             }
             else
@@ -98,13 +109,13 @@ public class FadeInComponent : MonoBehaviour,IFadeInComponent
             fading = false;
         
     }
-    public IEnumerator FadingOut()
+    public IEnumerator FadingOut(float targetY)
     {
         if (state == FadeState.beenIn)
         {
             if (tweener2 == null)
             {
-                tweener2 = trans.DOScaleY(0, fadeOutSpeed);
+                tweener2 = trans.DOScaleY(targetY, fadeOutSpeed);
                 tweener2.SetAutoKill(false);
             }
             else

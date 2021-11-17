@@ -48,7 +48,7 @@ public class DodgeComponent : MonoBehaviour, IDodgeComponent
         if (direction != 0)
         {
             StartCoroutine(Deliver(direction));
-            Debug.Log("传送完成");
+            //Debug.Log("传送完成");
         }
     }
 
@@ -60,13 +60,15 @@ public class DodgeComponent : MonoBehaviour, IDodgeComponent
         GameObject obbTest = raycastCreater.OverlapCirclecast(4,length, offset, true);
         if(obbTest == null)
         {
-            Debug.Log("传送：畅通无阻");
+            //Debug.Log("传送：畅通无阻");
             target = transform.position + diPos * length;
         }
         else
         {
-            Debug.Log("传送：遇到障碍");
-            float offsetX = obbTest.GetComponent<BoxCollider2D>().size.x * obbTest.transform.localScale.x ;
+            //Debug.Log("传送：遇到障碍");
+            //float offsetX = obbTest.GetComponent<BoxCollider2D>().size.x * obbTest.transform.localScale.x ;
+            float offsetX = obbTest.GetComponent<Collider2D>().bounds.size.x * obbTest.transform.localScale.x;
+            //float offsetX = obbTest.GetComponent<CircleCollider2D>().radius * obbTest.transform.localScale.x;
             target = obbTest.transform.position - diPos * offsetX;
         }
         return target;

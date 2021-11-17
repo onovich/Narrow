@@ -10,7 +10,8 @@ public enum Transition
     LostPlayer,//跟丢玩家
     Fatigue,//疲劳
     Relocated,//完成重定位
-
+    WindupDone,//前摇完毕
+    WinddownDone,//后摇完毕
 }
 
 
@@ -19,9 +20,11 @@ public enum StateID
     NullStateID = 0,
 
     Start,//初始化
-    Pend,//待机
+    
     Attack,//攻击
-    Hover,//徘徊
+    Sprint,//冲刺
+    Windup,//前摇
+    Winddown,//后摇
 }
 public abstract class FSMState 
 {

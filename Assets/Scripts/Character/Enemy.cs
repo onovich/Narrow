@@ -21,9 +21,18 @@ public interface IEnemy
     void Move();
     void GetHurt(float attackValue);
     void Destroy();
-    void Hover();
-    bool Fatigue();
-    bool TimeUp();
+    void Sprint();
+    void StopSprint();
+    void Windup();
+    void Winddown();
+    bool IfFatigue();
+    bool IfTimeUp();
+    bool IfWindupDone();
+    bool IfRelocated();
+    bool IfWinddownDone();
+    void SetTrigger();
+    void RemoveTrigger();
+    void SetDir();
 
 }
 

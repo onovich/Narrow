@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb1506ec0ee3d4f2f858d0a0f9f94e13, type: 3}
   m_Name: Player_Destructible_Setting
   m_EditorClassIdentifier: 
-  maxHp: 5
+  maxHp: 100

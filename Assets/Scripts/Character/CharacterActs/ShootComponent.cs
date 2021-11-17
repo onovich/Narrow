@@ -30,6 +30,11 @@ public class ShootComponent : MonoBehaviour,IShootComponent
         this.direction = direction;
     }
 
+    public void Ctor(float attackValue)
+    {
+        throw new System.NotImplementedException();
+    }
+
     private void Start()
     {
         GameObjectPoolManager.instance.CreatPool<BulletPool>("BulletPool");
@@ -39,6 +44,7 @@ public class ShootComponent : MonoBehaviour,IShootComponent
 
     /// 行为层实现
     /// 对外方法
+    
     public void Attack()
     {
         if (!onAttack)
@@ -47,10 +53,11 @@ public class ShootComponent : MonoBehaviour,IShootComponent
             onAttack = true;
         }
     }
-
+    
     public void AttackOff()
     {
-        StopCoroutine(Shooting());
+        StopAllCoroutines();
+        //StopCoroutine(Shooting());
         onAttack = false;
     }
     /// 内部实现
@@ -80,7 +87,5 @@ public class ShootComponent : MonoBehaviour,IShootComponent
         bullet.GetComponent<BulletEntity>().Ctor(this.direction);
     }
 
-
- 
     
 }

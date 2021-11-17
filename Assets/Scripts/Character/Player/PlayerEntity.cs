@@ -20,6 +20,7 @@ public class PlayerEntity : MonoBehaviour, IPlayerEntity
     // Setting
     public DestructibleSetting destructibleSetting;
     public MoveSetting moveSetting;
+    public TrailSetting trailSetting;
     // 预设
     public bool hurtable = false;
     public bool destroyable = false;
@@ -29,6 +30,8 @@ public class PlayerEntity : MonoBehaviour, IPlayerEntity
    
 
     public bool OnAttack { get=>destructibleComponent.OnAttack; }
+    public bool OnMoving { get => playerMoveComponent.OnMoving; }
+    public bool OnMovingController { get => playerMoveComponent.OnMovingController; }
 
 
     // 属性
@@ -43,17 +46,22 @@ public class PlayerEntity : MonoBehaviour, IPlayerEntity
     ICollideReactComponent collideReactComponent;
     IDodgeComponent dodgeComponent;
     IParryComponent parryComponent;
+    IPhysicalMorphComponent physicalMorphComponent;
+    IPlayerCollideReactComponent playerCollideReactComponent;
 
     // 控制层
     IPlayerControllerComponent playerControllerComponent;
 
     // 事件
-    event OnMoveEventHandler OnMoveEvent;
-    event OnMovingEventHandler OnMovingEvent;
-    event OnParryOnEventHandler OnParryOnEvent;
-    event OnDodgeEventHandler OnDodgeEvent;
+    event OnMoveControllerEventHandler OnMoveControllerEvent;
+    event OnMovingControllerEventHandler OnMovingControllerEvent;
+    event OnParryOnControllerEventHandler OnParryOnControllerEvent;
+    event OnDodgeControllerEventHandler OnDodgeControllerEvent;
     event OnParryDoneEventHandler OnParryDoneEvent;
     event OnParryCancelEventHandler OnParryCancelEvent;
+    event OnStopMoveControllerEventHandler OnStopMoveControllerEvent;
+    event OnPlayerCollideEventHandler OnPlayerCollideEvent;
+    event OnGetHurtEventHandler OnGetHurtEvent;
 
     //--------------------------------------------------------------------------
 
@@ -61,9 +69,9 @@ public class PlayerEntity : MonoBehaviour, IPlayerEntity
     public void Ctor()
     {
 
-        //一级行为层
+        // 一级行为层
         destructibleComponent = gameObject.AddComponent<DestructibleComponent>();
-        destructibleComponent.Ctor(trail, moveSetting, destructibleSetting, hurtable, destroyable, hurtEffect, deadEffect);
+        destructibleComponent.Ctor(trail, moveSetting, trailSetting,destructibleSetting, hurtable, destroyable, hurtEffect, deadEffect,OnGetHurtEvent);
 
         playerMoveComponent = new PlayerMoveComponent();
         playerMoveComponent.Ctor(transform, moveSetting, trail,rigid, collideEffect);
@@ -77,13 +85,22 @@ public class PlayerEntity : MonoBehaviour, IPlayerEntity
         collideReactComponent = gameObject.AddComponent<CollideReactComponent>();
         collideReactComponent.Ctor(Direction, collideEffect,true);
 
-        
-        //订阅事件
-        OnMoveEvent += playerMoveComponent.Move;
-        OnMovingEvent += playerMoveComponent.SetActive;
+        physicalMorphComponent = gameObject.AddComponent<PhysicalMorphComponent>();
+        physicalMorphComponent.Ctor(transform,trail,trailSetting);
 
-        OnDodgeEvent += dodgeComponent.Dodge;
-        OnParryOnEvent += parryComponent.ParryOn;
+        
+
+
+        // 订阅事件
+        OnMovingControllerEvent += playerMoveComponent.Move;
+        OnMoveControllerEvent += playerMoveComponent.SetActive;
+        OnPlayerCollideEvent += playerMoveComponent.SetBlock;
+
+        OnMovingControllerEvent += physicalMorphComponent.MoveMorph;
+        OnStopMoveControllerEvent += physicalMorphComponent.StopMorph;
+
+        OnDodgeControllerEvent += dodgeComponent.Dodge;
+        OnParryOnControllerEvent += parryComponent.ParryOn;
 
         OnParryDoneEvent += collideReactComponent.SetBulletDestructibleOff;
         OnParryDoneEvent += destructibleComponent.SetDestructibleOff;
@@ -91,9 +108,37 @@ public class PlayerEntity : MonoBehaviour, IPlayerEntity
         OnParryCancelEvent += collideReactComponent.SetBulletDestructibleOn;
         OnParryCancelEvent += destructibleComponent.SetDestructibleOn;
 
-        //二级行为层
+        
+
+
+
+        // 二级行为层
         playerControllerComponent = new PlayerControllerComponent();
-        playerControllerComponent.Ctor(OnMoveEvent, OnMovingEvent, OnParryOnEvent, OnDodgeEvent);
+        playerControllerComponent.Ctor(OnMoveControllerEvent, OnMovingControllerEvent, OnParryOnControllerEvent, OnDodgeControllerEvent, OnStopMoveControllerEvent);
+
+        playerCollideReactComponent = gameObject.AddComponent<PlayerCollideReactComponent>();
+        playerCollideReactComponent.Ctor(transform, this, trail, OnPlayerCollideEvent, collideEffect);
+    }
+
+    /// 注销事件
+    private void OnDestroy()
+    {
+        OnMovingControllerEvent -= playerMoveComponent.Move;
+        OnMoveControllerEvent -= playerMoveComponent.SetActive;
+
+        OnMovingControllerEvent -= physicalMorphComponent.MoveMorph;
+        OnStopMoveControllerEvent -= physicalMorphComponent.StopMorph;
+
+        OnDodgeControllerEvent -= dodgeComponent.Dodge;
+        OnParryOnControllerEvent -= parryComponent.ParryOn;
+
+        OnParryDoneEvent -= collideReactComponent.SetBulletDestructibleOff;
+        OnParryDoneEvent -= destructibleComponent.SetDestructibleOff;
+
+        OnParryCancelEvent -= collideReactComponent.SetBulletDestructibleOn;
+        OnParryCancelEvent -= destructibleComponent.SetDestructibleOn;
+
+        OnPlayerCollideEvent -= playerMoveComponent.SetBlock;
 
     }
 
@@ -110,7 +155,7 @@ public class PlayerEntity : MonoBehaviour, IPlayerEntity
     private void Update()
     {
         playerControllerComponent.Update();
-        playerMoveComponent.HitChecking();
+        playerCollideReactComponent.HitChecking();
     }
 
 }

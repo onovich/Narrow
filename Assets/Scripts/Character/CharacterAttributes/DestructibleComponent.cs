@@ -10,13 +10,17 @@ public interface IDestructibleComponent
 {
     void GetHurt(float attackValue);
     void Destroy();
-    void Ctor(DestructibleSetting setting, bool hurtable, bool destroyable, ParticleSystem hurtEffect, ParticleSystem deadEffect);
-    void Ctor(TrailRenderer trail, MoveSetting moveSetting, DestructibleSetting setting, bool hurtable, bool destroyable, ParticleSystem hurtEffect, ParticleSystem deadEffect);
+    void Ctor(DestructibleSetting setting, bool hurtable, bool destroyable, ParticleSystem hurtEffect, ParticleSystem deadEffect, OnGetHurtEventHandler OnGetHurtEvent);
+    void Ctor(TrailRenderer trail, MoveSetting moveSetting,TrailSetting trailSetting, DestructibleSetting setting, bool hurtable, bool destroyable, ParticleSystem hurtEffect, ParticleSystem deadEffect, OnGetHurtEventHandler OnGetHurtEvent);
     bool OnAttack { get; set; }
     bool hurtable { get; set; }
     void SetDestructibleOn();
     void SetDestructibleOff();
 }
+
+
+public delegate void OnGetHurtEventHandler();
+
 
 [RequireComponent(typeof(BoxCollider2D))]
 public class DestructibleComponent : MonoBehaviour, IDestructibleComponent
@@ -44,20 +48,25 @@ public class DestructibleComponent : MonoBehaviour, IDestructibleComponent
     Tween tweener;
     Tween tweener2;
 
+    //事件
+    event OnGetHurtEventHandler OnGetHurtEvent;
+
     /// 获取依赖
-    public void Ctor(DestructibleSetting setting, bool hurtable, bool destroyable, ParticleSystem hurtEffect, ParticleSystem deadEffect)
+    public void Ctor(DestructibleSetting setting, bool hurtable, bool destroyable, ParticleSystem hurtEffect, ParticleSystem deadEffect, OnGetHurtEventHandler OnGetHurtEvent)
     {
         this.setting = setting;
         this.hurtable = hurtable;
         this.destroyable = destroyable;
         this.hurtEffect = hurtEffect;
         this.deadEffect = deadEffect;
+        this.OnGetHurtEvent = OnGetHurtEvent;
+
     }
-    public void Ctor(TrailRenderer trail, MoveSetting moveSetting, DestructibleSetting setting, bool hurtable, bool destroyable, ParticleSystem hurtEffect, ParticleSystem deadEffect)
+    public void Ctor(TrailRenderer trail, MoveSetting moveSetting,TrailSetting trailSetting, DestructibleSetting setting, bool hurtable, bool destroyable, ParticleSystem hurtEffect, ParticleSystem deadEffect, OnGetHurtEventHandler OnGetHurtEvent)
     {
         this.trail = trail;
-        this.trailTime = moveSetting.trailTime;
-        Ctor(setting, hurtable, destroyable, hurtEffect, deadEffect);
+        this.trailTime = trailSetting.trailLifeTime;
+        Ctor(setting, hurtable, destroyable, hurtEffect, deadEffect, OnGetHurtEvent);
     }
 
     /// 初始化
@@ -88,11 +97,15 @@ public class DestructibleComponent : MonoBehaviour, IDestructibleComponent
             StartCoroutine(Flash());
             if (ifPlayer)
             {
-                Debug.Log("确实是player");
+                //Debug.Log("确实是player");
                 RefreshTrail();
             }
 
             hp -= attackValue;
+            //广播：受到伤害
+            OnGetHurtEvent?.Invoke();
+            //Debug.LogError("广播：受到伤害");
+
             if ((destroyable) && (hp <= 0))
             {
                 Destroy();
@@ -157,7 +170,7 @@ public class DestructibleComponent : MonoBehaviour, IDestructibleComponent
 
         boxCollider.enabled = false;
         yield return new WaitForSeconds(.2f);
-        Destroy(gameObject);
+        Destroy(this.gameObject);
 
     }
 

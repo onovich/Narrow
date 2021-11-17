@@ -63,7 +63,7 @@ public class BulletEntity : MonoBehaviour
     /// 碰撞检测
     void Hit(GameObject hit)
     {
-        Debug.Log("击中" + hit.name);
+        //Debug.Log("击中" + hit.name);
         hit.GetComponent<DestructibleComponent>().GetHurt(GetComponent<AttackComponent>().attackValue);
         CameraShake.instance.Shake();
         sprite.enabled = false;
@@ -88,7 +88,7 @@ public class BulletEntity : MonoBehaviour
 
         float dis = .12f;
         GameObject hit = raycastCreater.Raycast("harmful",5, direction,dis,false);//ignoreSelf选false是因为考虑到会被发射出的子弹再反弹后伤害
-
+        //GameObject hit = raycastCreater.Raycast(5, direction, dis, true);
         if (hit != null)
         {
             DestructibleComponent destructibleComponent = hit.GetComponent<DestructibleComponent>();

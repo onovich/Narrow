@@ -9,22 +9,24 @@ using System;
 
 public interface IPlayerControllerComponent
 {
-    void Ctor(OnMoveEventHandler OnMoveEvent, OnMovingEventHandler OnMovingEvent,OnParryOnEventHandler OnParryOnEvent, OnDodgeEventHandler OnDodgeEvent);
+    void Ctor(OnMoveControllerEventHandler OnMoveControllerEvent, OnMovingControllerEventHandler OnMovingControllerEvent, OnParryOnControllerEventHandler OnParryOnControllerEvent, OnDodgeControllerEventHandler OnDodgeControllerEvent, OnStopMoveControllerEventHandler OnStopMoveControllerEvent);
     void Update();
 }
 
-public delegate void OnMoveEventHandler();
-public delegate void OnMovingEventHandler();
-public delegate void OnParryOnEventHandler();
-public delegate void OnDodgeEventHandler();
+public delegate void OnMoveControllerEventHandler();
+public delegate void OnMovingControllerEventHandler();
+public delegate void OnParryOnControllerEventHandler();
+public delegate void OnDodgeControllerEventHandler();
+public delegate void OnStopMoveControllerEventHandler();
 
 public class PlayerControllerComponent : IPlayerControllerComponent
 {
 
-    event OnMoveEventHandler OnMoveEvent;
-    event OnMovingEventHandler OnMovingEvent;
-    event OnParryOnEventHandler OnParryOnEvent;
-    event OnDodgeEventHandler OnDodgeEvent;
+    event OnMoveControllerEventHandler OnMoveControllerEvent;
+    event OnMovingControllerEventHandler OnMovingControllerEvent;
+    event OnParryOnControllerEventHandler OnParryOnControllerEvent;
+    event OnDodgeControllerEventHandler OnDodgeControllerEvent;
+    event OnStopMoveControllerEventHandler OnStopMoveControllerEvent;
 
     /* 在别处订阅
      * npcTargetAttribute.OnNpcMoveEvent += Refresh;
@@ -33,35 +35,41 @@ public class PlayerControllerComponent : IPlayerControllerComponent
      */
 
 
-    public void Ctor(OnMoveEventHandler OnMoveEvent, OnMovingEventHandler OnMovingEvent,OnParryOnEventHandler OnParryOnEvent, OnDodgeEventHandler OnDodgeEvent)
+    public void Ctor(OnMoveControllerEventHandler OnMoveControllerEvent, OnMovingControllerEventHandler OnMovingControllerEvent, OnParryOnControllerEventHandler OnParryOnControllerEvent, OnDodgeControllerEventHandler OnDodgeControllerEvent, OnStopMoveControllerEventHandler OnStopMoveControllerEvent)
     {
-        this.OnMoveEvent = OnMoveEvent;
-        this.OnMovingEvent = OnMovingEvent;
-        this.OnParryOnEvent = OnParryOnEvent;
-        this.OnDodgeEvent = OnDodgeEvent;
+        this.OnMoveControllerEvent = OnMoveControllerEvent;
+        this.OnMovingControllerEvent = OnMovingControllerEvent;
+        this.OnParryOnControllerEvent = OnParryOnControllerEvent;
+        this.OnDodgeControllerEvent = OnDodgeControllerEvent;
+        this.OnStopMoveControllerEvent = OnStopMoveControllerEvent;
     }
 
     public void Update()
     {
         if (Input.GetKeyDown(KeyCode.LeftCommand))
         {
-            OnDodgeEvent?.Invoke();
-            Debug.Log("获取闪避控制");
+            OnDodgeControllerEvent?.Invoke();
+            //Debug.Log("获取闪避控制");
         }
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            OnParryOnEvent?.Invoke();
-            Debug.Log("获取护盾控制");
+            OnParryOnControllerEvent?.Invoke();
+            //Debug.Log("获取护盾控制");
         }
-        if (Input.GetKey(KeyCode.A)|| Input.GetKey(KeyCode.D))
+        if (Input.GetKeyDown(KeyCode.A)|| Input.GetKeyDown(KeyCode.D))
         {
-            OnMoveEvent?.Invoke();
-            Debug.Log("获取移动中控制");
+            OnMoveControllerEvent?.Invoke();
+            //Debug.Log("获取移动中控制");
         }
-        if ((Input.GetKeyDown(KeyCode.A)) || (Input.GetKeyDown(KeyCode.D)))
+        if ((Input.GetKey(KeyCode.A)) || (Input.GetKey(KeyCode.D)))
         {
-            OnMovingEvent?.Invoke();
-            Debug.Log("获取移动控制");
+            OnMovingControllerEvent?.Invoke();
+            //Debug.Log("获取移动控制");
+        }
+        if ((Input.GetKeyUp(KeyCode.A)) || (Input.GetKeyUp(KeyCode.D)))
+        {
+            OnStopMoveControllerEvent?.Invoke();
+            // Debug.Log("获取移动停止输入控制");
         }
     }
 

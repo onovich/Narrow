@@ -2,29 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MFortHoverState : FSMState
+public class MFortSprintState : FSMState
 {
     //private Transform target;
 
 
-    public MFortHoverState(FSMSystem fsm) : base(fsm)
+    public MFortSprintState(FSMSystem fsm) : base(fsm)
     {
-        stateID = StateID.Hover;
-
-
+        stateID = StateID.Sprint;
     }
 
     public override void Act(IEnemy enemy)
     {
-        //enemy.GetComponent<SpriteRenderer>().color = new Color(1, 0, 0, 1);
-        enemy.Move();
+        enemy.Sprint();
 
     }
 
     public override void Reason(IEnemy enemy)
     {
-        if (true)
+        if (enemy.IfRelocated())
         {
+            enemy.StopSprint();
+            Debug.LogError("完成徘徊，切换状态");
             fsm.PerformTransition(Transition.Relocated);
         }
         //当满足xx条件后，触发重定位

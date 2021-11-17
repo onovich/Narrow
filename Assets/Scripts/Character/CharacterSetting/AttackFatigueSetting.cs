@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu]
-public class DestructibleSetting : ScriptableObject
+public class AttackFatigueSetting : ScriptableObject
 {
-    [Range(0,100f)]
-    public float maxHp;
-
+    public int threshold = 5;
 }

@@ -5,8 +5,11 @@ using UnityEngine;
 
 public class MFortFSM : IFSM
 {
-    public MFortFSM(MFortEntity mFortEntity, StateID defaultState)
+    public IEnemy Enemy;
+
+    public MFortFSM(MFortEntity mFortEntity, StateID defaultState, IEnemy Enemy)
     {
+        this.Enemy = Enemy;
         Ctor(mFortEntity, defaultState);
     }
 
@@ -33,20 +36,33 @@ public class MFortFSM : IFSM
         //攻击的情况下
         FSMState attackState = new MFortAttackState(fsm);
         //疲劳后，进入徘徊状态
-        attackState.ADDTransition(Transition.Fatigue, StateID.Hover);
+        attackState.ADDTransition(Transition.Fatigue, StateID.Windup);
 
-        //徘徊的情况下
-        FSMState moveState = new MFortHoverState(fsm);
-        //重定位后，进入攻击状态
-        moveState.ADDTransition(Transition.Relocated, StateID.Attack);
+        //冲刺前摇的情况下
+        FSMState windupState = new MFortWindupState(fsm);
+        //前摇结束后，进入冲刺状态
+        windupState.ADDTransition(Transition.WindupDone, StateID.Sprint);
 
-        
+
+        //冲刺的情况下
+        FSMState sprintState = new MFortSprintState(fsm);
+        //重定位后，进入后摇状态
+        sprintState.ADDTransition(Transition.Relocated, StateID.Winddown);
+
+        //后摇的情况下
+        FSMState winddownState = new MFortWinddownState(fsm);
+        //重定位后，进入后摇状态
+        winddownState.ADDTransition(Transition.WinddownDone, StateID.Attack);
+
 
         //注册状态
-        fsm.AddState(moveState);
+        fsm.AddState(startState);
         fsm.AddState(attackState);
+        fsm.AddState(windupState);
+        fsm.AddState(sprintState);
+        fsm.AddState(winddownState);
 
-        //fsm.currentFSMState = defaultState == StateID.Attack ? attackState : moveState;
+        //指定默认状态
         fsm.currentFSMState = startState;
         this.mFortEntity = mFortEntity;
     }

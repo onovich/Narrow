@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class RaycastCreater
 {
-
+    public bool ifShowsLog = false;
     Transform parent;
     public RaycastCreater(Transform parent)
     {
         this.parent = parent;
     }
-    GameObject result;
+    
+
+    
 
     /// <summary>
     /// Only for left or right in this project.
@@ -43,39 +45,7 @@ public class RaycastCreater
 
         Vector2 offset = direction > 0 ? parent.right : -parent.right;
         int hitNumber = Physics2D.Raycast(parent.position, offset, filter, hits, length);
-
-        if (ignoreSelf)
-        {
-            if (hitNumber > 0)
-            {
-                if (hits[0] != parent.gameObject)
-                {
-                    result = hits[0].collider.gameObject;
-                }
-                else
-                {
-                    if (hitNumber > 1)
-                    {
-                        result = hits[1].collider.gameObject;
-                    }
-                    else
-                    {
-                        result = null;
-                    }
-                }
-            }
-            else
-            {
-                result = null;
-            }
-        }
-        else
-        {
-            result = hitNumber > 0 ? hits[0].collider.gameObject : null;
-
-        }
-
-
+        GameObject result = hitTest(hitNumber, hits, ignoreSelf);
 
         return result;
 
@@ -141,28 +111,49 @@ public class RaycastCreater
         }
         int hitNumber = Physics2D.OverlapCircle(pos, size, filter, hits );
 
+        GameObject result = hitTest(hitNumber,hits,ignoreSelf);
+
+        return result;
+    }
+
+    GameObject hitTest(int hitNumber, Collider2D[] hits, bool ignoreSelf)
+    {
+        GameObject result = null;
+
         if (ignoreSelf)
         {
             if (hitNumber > 0)
             {
-                if (hits[0] != parent.gameObject)
+                if (hitNumber == 1)
                 {
-                    result = hits[0].gameObject;
-                }
-                else
-                {
-                    if (hitNumber > 1)
+                    if (hits[0].gameObject == parent.gameObject)
                     {
+                        if(ifShowsLog) Debug.Log("截断1:仅一个碰撞，忽略自体后无碰撞");
+                        result = null;
+                    }
+                    else
+                    {
+                        if (ifShowsLog) Debug.Log("截断2:仅一个碰撞，返回碰撞");
+                        result = hits[0].gameObject;
+                    }
+                }
+                if (hitNumber > 1)
+                {
+                    if (hits[0].gameObject == parent.gameObject)
+                    {
+                        if (ifShowsLog) Debug.Log("截断3:多个碰撞，忽略自体后返回碰撞");
                         result = hits[1].gameObject;
                     }
                     else
                     {
-                        result = null;
+                        if (ifShowsLog) Debug.Log("截断4:多个碰撞，返回碰撞");
+                        result = hits[0].gameObject;
                     }
                 }
             }
             else
             {
+                if (ifShowsLog) Debug.Log("截断5:完全无碰撞");
                 result = null;
             }
         }
@@ -170,12 +161,55 @@ public class RaycastCreater
         {
             result = hitNumber > 0 ? hits[0].gameObject : null;
         }
-
-        
-
         return result;
     }
+    GameObject hitTest(int hitNumber,RaycastHit2D[] hits,bool ignoreSelf)
+    {
+        GameObject result = null;
 
+        if (ignoreSelf)
+        {
+            if (hitNumber > 0)
+            {
+                if (hitNumber == 1)
+                {
+                    if (hits[0].collider.gameObject == parent.gameObject)
+                    {
+                        if (ifShowsLog) Debug.Log("截断1:仅一个碰撞，忽略自体后无碰撞");
+                        result = null;
+                    }
+                    else
+                    {
+                        if (ifShowsLog) Debug.Log("截断2:仅一个碰撞，返回碰撞");
+                        result = hits[0].collider.gameObject;
+                    }
+                }
+                if (hitNumber > 1)
+                {
+                    if (hits[0].collider.gameObject == parent.gameObject)
+                    {
+                        if (ifShowsLog) Debug.Log("截断3:多个碰撞，忽略自体后返回碰撞");
+                        result = hits[1].collider.gameObject;
+                    }
+                    else
+                    {
+                        if (ifShowsLog) Debug.Log("截断4:多个碰撞，返回碰撞");
+                        result = hits[0].collider.gameObject;
+                    }
+                }
+            }
+            else
+            {
+                if (ifShowsLog) Debug.Log("截断5:完全无碰撞");
+                result = null;
+            }
+        }
+        else
+        {
+            result = hitNumber > 0 ? hits[0].collider.gameObject : null;
+        }
+        return result;
+    }
 
 
 }
