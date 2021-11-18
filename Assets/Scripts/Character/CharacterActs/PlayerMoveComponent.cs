@@ -88,7 +88,7 @@ public class PlayerMoveComponent :IPlayerMoveComponent
 
                 if (Input.GetKey(KeyCode.A)) { Direction = -1; }
                 else if (Input.GetKey(KeyCode.D)) { Direction = 1; }
-                else Direction = 0;
+                //else Direction = 0;
 
 
 

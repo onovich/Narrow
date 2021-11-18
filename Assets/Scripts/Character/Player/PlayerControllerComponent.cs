@@ -28,13 +28,6 @@ public class PlayerControllerComponent : IPlayerControllerComponent
     event OnDodgeControllerEventHandler OnDodgeControllerEvent;
     event OnStopMoveControllerEventHandler OnStopMoveControllerEvent;
 
-    /* 在别处订阅
-     * npcTargetAttribute.OnNpcMoveEvent += Refresh;
-     * 发出广播:
-     * OnMove?.Invoke();
-     */
-
-
     public void Ctor(OnMoveControllerEventHandler OnMoveControllerEvent, OnMovingControllerEventHandler OnMovingControllerEvent, OnParryOnControllerEventHandler OnParryOnControllerEvent, OnDodgeControllerEventHandler OnDodgeControllerEvent, OnStopMoveControllerEventHandler OnStopMoveControllerEvent)
     {
         this.OnMoveControllerEvent = OnMoveControllerEvent;
@@ -46,7 +39,7 @@ public class PlayerControllerComponent : IPlayerControllerComponent
 
     public void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftCommand))
+        if ((Input.GetKeyDown(KeyCode.LeftCommand)&&((Input.GetKey(KeyCode.A))||(Input.GetKey(KeyCode.D)))))
         {
             OnDodgeControllerEvent?.Invoke();
             Debug.Log("获取闪避控制");

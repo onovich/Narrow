@@ -21,6 +21,7 @@ public class DodgeComponent : MonoBehaviour, IDodgeComponent
     public float length = 2f;
     private float offset;
     public float speed = .1f;
+    bool onDodge = false;
 
     // 属性
     int direction { get => playerEntity.Direction; }
@@ -45,10 +46,13 @@ public class DodgeComponent : MonoBehaviour, IDodgeComponent
     /// 外部调用
     public void Dodge()
     {
-        if (direction != 0)
+        if (!onDodge)
         {
-            StartCoroutine(Deliver(direction));
-            Debug.Log("传送完成:direction="+direction);
+            if (direction != 0)
+            {
+                onDodge = true;
+                StartCoroutine(Deliver(direction));
+            }
         }
     }
 
@@ -58,7 +62,7 @@ public class DodgeComponent : MonoBehaviour, IDodgeComponent
         Vector3 target;
         Vector3 diPos = direction > 0 ? Vector3.right : -Vector3.right;
         GameObject obbTest = raycastCreater.OverlapCirclecast(4,length, offset, true);
-        if(obbTest == null)
+        if((obbTest == null)||(obbTest.CompareTag("bullet")))
         {
             //Debug.Log("传送：畅通无阻");
             target = transform.position + diPos * length;
@@ -80,7 +84,10 @@ public class DodgeComponent : MonoBehaviour, IDodgeComponent
         trans.position = targetTest(direction);
         yield return new WaitForSecondsRealtime(.1f);
         //trail.enabled = false;
+        onDodge = false;
+        Debug.Log("传送完成:direction=" + direction);
+
     }
 
-   
+
 }
