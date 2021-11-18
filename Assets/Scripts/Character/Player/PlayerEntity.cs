@@ -4,7 +4,7 @@ using UnityEngine;
 
 public interface IPlayerEntity
 {
-    int Direction { get; }
+    //int Direction { get; }
     bool OnAttack { get; }
 }
 

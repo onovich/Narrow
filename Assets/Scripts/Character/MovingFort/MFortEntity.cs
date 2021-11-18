@@ -19,6 +19,8 @@ public class MFortEntity : MonoBehaviour, IEnemy
     public int direction;
     public bool hurtable = false;
     public bool destroyable = false;
+    public Transform transA;
+    public Transform transB;
 
     Rigidbody2D rigid;
     Collider2D collider2d;
@@ -76,9 +78,7 @@ public class MFortEntity : MonoBehaviour, IEnemy
         attackFatigueComponent = new AttackFatigueComponent();
         attackFatigueComponent.Ctor(attackFatigueSetting);
 
-        //二级行为层
-        sprintComponent = gameObject.AddComponent<MFortSprintComponent>();
-        sprintComponent.Ctor(transform,this,rigid,collider2d);
+        
 
         //逻辑层
         defaultState = StateID.Start;
@@ -91,13 +91,20 @@ public class MFortEntity : MonoBehaviour, IEnemy
         destructibleComponent = gameObject.AddComponent<DestructibleComponent>();
         destructibleComponent.Ctor(destructibleSetting, hurtable, destroyable, hurtEffect, deadEffect, OnGetHurtEvent);
 
+        //二级行为层
+        sprintComponent = gameObject.AddComponent<MFortSprintComponent>();
+        sprintComponent.Ctor(transform, this, rigid, transA, transB, destructibleComponent);
+
     }
 
     private void Awake()
     {
         Ctor();
     }
-
+    private void Start()
+    {
+        SetDir();
+    }
     //--------------------------------------------------------------------------
 
     /// 行为层实现
@@ -135,14 +142,16 @@ public class MFortEntity : MonoBehaviour, IEnemy
 
 
 
-    public void SetTrigger()
+    public void SetStatic()
     {
-        sprintComponent.SetTrigger();
+        sprintComponent.SetStatic();
     }
-    public void RemoveTrigger()
+
+    public void RemoveStatic()
     {
-        sprintComponent.RemoveTrigger();
+        sprintComponent.RemoveStatic();
     }
+
 
 
     /// 二级行为层
@@ -156,7 +165,7 @@ public class MFortEntity : MonoBehaviour, IEnemy
     }
     public void Windup()
     {
-        SetTrigger();
+        //SetTrigger();
         fadeInComponent.FadeOut(.1f);
     }
     public void Sprint()
@@ -169,7 +178,7 @@ public class MFortEntity : MonoBehaviour, IEnemy
     }
     public void Winddown()
     {
-        RemoveTrigger();
+        //RemoveTrigger();
         fadeInComponent.FadeIn();
     }
 
@@ -184,7 +193,8 @@ public class MFortEntity : MonoBehaviour, IEnemy
     public void SetDir()
     {
         //direction = Global.instance.player.GetComponent<PlayerEntity>().Direction;
-        direction = (int)(Mathf.Abs(Global.instance.player.transform.position.x - transform.position.x) / (Global.instance.player.transform.position.x - transform.position.x));
+        //direction = (int)(Mathf.Abs(Global.instance.player.transform.position.x - transform.position.x) / (Global.instance.player.transform.position.x - transform.position.x));
+        direction = Global.instance.player.transform.position.x > transform.position.x ? 1 : -1;
     }
 
     //--------------------------------------------------------------------------

@@ -6,12 +6,14 @@ using UnityEngine;
 public interface IMFortSprintComponent
 {
     void Sprint();
-    void Ctor(Transform trans, MFortEntity mFort, Rigidbody2D rigid, Collider2D collider);
+    void Ctor(Transform trans, MFortEntity mFort, Rigidbody2D rigid, Transform transA, Transform transB, IDestructibleComponent destructible);
     //bool IfSprintDone();
     bool IfSprintDone { get; set; }
     void StopSprint();
-    void SetTrigger();
-    void RemoveTrigger();
+    void SetStatic();
+    void RemoveStatic();
+    void SetSprintLayer();
+    void ResetLayer();
 }
 
 public class MFortSprintComponent : MonoBehaviour, IMFortSprintComponent
@@ -20,86 +22,41 @@ public class MFortSprintComponent : MonoBehaviour, IMFortSprintComponent
     Transform trans;
     MFortEntity mFort;
     Rigidbody2D rigid;
-    Collider2D collider2d;
-    
-    /// 碰撞检测
+    //Collider2D collider2d;
+    Transform transA;
+    Transform transB;
+    IDestructibleComponent destructible;
+    //bool OnAttack = false;
+    bool isOnHover = false;
+
+
     void SprintHurt(GameObject hit)
     {
-        //Debug.Log("击中" + hit.name);
         if (hit.GetComponent<DestructibleComponent>() == null) Debug.LogError("空对象DestructibleComponent");
         if (GetComponent<AttackComponent>() == null) Debug.LogError("空对象AttackComponent");
         hit.GetComponent<DestructibleComponent>().GetHurt(GetComponent<AttackComponent>().attackValue);
         CameraShake.instance.Shake();
     }
 
-    bool OnAttack = false;
-
-
-    public void SetTrigger()
+    public void SetSprintLayer()
     {
-        collider2d.isTrigger = true;
-        rigid.bodyType =RigidbodyType2D.Dynamic;
+        trans.gameObject.layer = LayerMask.NameToLayer("sprint");
+    }
+    public void ResetLayer()
+    {
+        trans.gameObject.layer = LayerMask.NameToLayer("harmful");
     }
 
-    public void RemoveTrigger()
+    public void SetStatic()
     {
-        collider2d.isTrigger = false;
         rigid.bodyType = RigidbodyType2D.Static;
     }
 
-
-    private void OnCollisionEnter2D(Collision2D collision)
+    public void RemoveStatic()
     {
-        if (collider2d.gameObject.layer == (LayerMask.NameToLayer("harmful")))
-        {
-         }
-        else
-        {
-
-         }
-
+        rigid.bodyType = RigidbodyType2D.Dynamic;
     }
 
-
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collider2d.gameObject.layer == (LayerMask.NameToLayer("harmful")))
-        {
-            if (!OnAttack)
-            {
-                DestructibleComponent destructibleComponent = collision.GetComponent<DestructibleComponent>();
-                if ((destructibleComponent != null) && (destructibleComponent.hurtable)) SprintHurt(collision.gameObject);
-                //发送伤害广播
-            }
-            OnAttack = true;
- 
-        }
-        else
-        {
- 
-        }
-    }
-
-
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        if (collider2d.gameObject.layer == (LayerMask.NameToLayer("harmful")))
-        {
-            OnAttack = false;
-            collider2d.isTrigger = false;
-        }
-        else
-        {
-            //RemoveTrigger();
-        }
-    }
-
-
-
-
-
-    
     
     bool Hit()
     {
@@ -107,87 +64,134 @@ public class MFortSprintComponent : MonoBehaviour, IMFortSprintComponent
         GameObject hit = raycastCreater.Raycast(5, mFort.direction, dis, true);
         if (hit != null)
         {
-            //DestructibleComponent destructibleComponent = hit.GetComponent<DestructibleComponent>();
-            //if((destructibleComponent!=null)&&(destructibleComponent.hurtable)) SprintHurt(hit);
-
             if(hit.gameObject.layer==(LayerMask.NameToLayer("harmful")))
             {
                 Debug.Log("击中且击中可伤害物体");
-                IfSprintDone = false;
+                SprintHurt(hit);
                 return false;
             }
             else
             {
                 Debug.Log("击中不可穿透物体");
-                IfSprintDone = true;
                 return true;
             }
         }
         else
         {
             Debug.Log("未击中");
-            IfSprintDone = false;
+            //IfSprintDone = false;
             return false;
         }
     }
     
     
-    public void Ctor(Transform trans,MFortEntity mFort,Rigidbody2D rigid,Collider2D collider)
+    public void Ctor(Transform trans,MFortEntity mFort,Rigidbody2D rigid,Transform transA,Transform transB, IDestructibleComponent destructible)
     {
         this.trans = transform;
         this.mFort = mFort;
         this.rigid = rigid;
-        this.collider2d = collider;
+        //this.collider2d = collider;
+        this.transA = transA;
+        this.transB = transB;
+        this.destructible = destructible;
         raycastCreater = new RaycastCreater(trans);
         //raycastCreater.ifShowsLog = true;
     }
 
-    public void Run()
-    {
-        int direction = mFort.direction;
-        float speed = 10f;
-        Vector3 normalSpeed;
-        
-        if (!Hit())
-        {
-            normalSpeed = (new Vector3(direction, 0, 0)).normalized;
-            //rigid.velocity += (Vector2)normalSpeed * speed * Time.smoothDeltaTime;
-            //rigid.velocity = (Vector2)normalSpeed * speed * 40 * Time.smoothDeltaTime;
-            rigid.AddForce((Vector2)normalSpeed * speed * 1000 * Time.smoothDeltaTime);
+     
 
-        }
-        else
+    public void Hover()
+    {
+        if (!isOnHover)
         {
-            mFort.direction *= -1;
+            isOnHover = true;
+            StartCoroutine(Hovering());
         }
-        
-        //normalSpeed = (new Vector3(direction, 0, 0)).normalized;
-        //rigid.AddForce((Vector2)normalSpeed * speed * 800 * Time.smoothDeltaTime);
     }
 
+    Vector2 searchNextPos()
+    {
+        float disA = Vector2.Distance(trans.position, transA.position);
+        float disB = Vector2.Distance(trans.position, transB.position);
+        Vector2 result = disA > disB ? transA.position : transB.position;
+        return result;
+    }
+
+    void SetDirToTarget(Vector2 target)
+    {
+        int direction = target.x > trans.position.x ? 1 : -1;
+        mFort.direction = direction;
+    }
+    
+
+    IEnumerator Hovering()
+    {
+        SetSprintLayer();
+        IfSprintDone = false;
+        int times = Random.Range(1, 3);
+        float speed = .10f;
+
+        for (int i = 0; i < times; i++)
+        {
+            Vector2 target = searchNextPos();
+
+            int direction = target.x > trans.position.x ? 1 : -1;
+            SetDirToTarget(target);
+
+            Vector3 normalSpeed;
+            normalSpeed = (new Vector3(direction, 0, 0)).normalized;
+            float dis = Vector2.Distance(trans.position, target);
+
+            while (dis > .05)
+            {
+                if (Hit())
+                {
+                    //Debug.LogError("触碰退出循环");
+                    break;
+                }
+                else
+                {
+                    //rigid.AddForce((Vector2)normalSpeed * speed * 4000 * Time.smoothDeltaTime);
+                    rigid.MovePosition((Vector2)trans.position+new Vector2( direction* speed,0));
+                    //trans.position = Vector3.MoveTowards();
+                    dis = Vector2.Distance(trans.position, target);
+                    //Debug.Log("dis="+dis);
+                    yield return null;
+                }
+                
+                
+            }
+            //Debug.LogError("hover循环完成，当前迭代"+i+"，总计迭代"+times);
+            //yield return new WaitForSeconds(.5f);
+        }
+        IfSprintDone = true;
+        ResetLayer();
+
+    }
+
+
+
+     
     
 
     public void Sprint()
     {
         Hit();
-        Run();
-
-        Debug.Log("执行徘徊动作");
+         Hover();
+        //Debug.Log("执行徘徊动作");
     }
     public void StopSprint()
     {
-        rigid.velocity = Vector2.zero;
+        SetDir();
+        isOnHover = false;
+
+        //rigid.velocity = Vector2.zero;
     }
-
-
-    /*
-    public bool IfSprintDone()
+    public void SetDir()
     {
-        Debug.Log("执行检测是否徘徊完毕:"+ Hit());
-        if(Hit())Debug.LogError("完成徘徊");
-        return Hit();
+        mFort.direction = Global.instance.player.transform.position.x > transform.position.x ? 1 : -1;
     }
-    */
+
     public bool IfSprintDone { get; set; }
 
 }

@@ -226,13 +226,13 @@ MonoBehaviour:
     showEyeDropper: 1
   highlights:
     m_OverrideState: 1
-    m_Value: {r: 0.9811321, g: 0.43965825, b: 0.43965825, a: 1}
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
     hdr: 0
     showAlpha: 0
     showEyeDropper: 1
   balance:
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: -11
     min: -100
     max: 100
 --- !u!114 &6214015206838785333
@@ -310,18 +310,18 @@ MonoBehaviour:
         m_Curve:
         - serializedVersion: 3
           time: 0
-          value: 0
+          value: 0.60645163
           inSlope: 0
-          outSlope: 2.8231292
+          outSlope: -1.5119215
           tangentMode: 0
           weightedMode: 0
           inWeight: 0
           outWeight: 0
         - serializedVersion: 3
           time: 1
-          value: 1
-          inSlope: 1
-          outSlope: 0
+          value: 0
+          inSlope: -0.4017042
+          outSlope: -0.4017042
           tangentMode: 0
           weightedMode: 0
           inWeight: 0

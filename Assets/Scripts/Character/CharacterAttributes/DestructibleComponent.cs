@@ -93,26 +93,47 @@ public class DestructibleComponent : MonoBehaviour, IDestructibleComponent
     {
         if (hurtable)
         {
-            StopCoroutine(Flash());
-            StartCoroutine(Flash());
-            if (ifPlayer)
+            if (IfColdDone)
             {
-                //Debug.Log("确实是player");
-                RefreshTrail();
+                StopCoroutine(Flash());
+                StartCoroutine(Flash());
+                if (ifPlayer)
+                {
+                    //Debug.Log("确实是player");
+                    RefreshTrail();
+                }
+                //else CameraShake.instance.FlashBlackAndWhite();
+
+                hp -= attackValue;
+                //广播：受到伤害
+                OnGetHurtEvent?.Invoke();
+                //Debug.LogError("广播：受到伤害");
+                StopCoroutine(CD());
+                StartCoroutine(CD());
+
+                if ((destroyable) && (hp <= 0))
+                {
+                    Destroy();
+
+                }
             }
 
-            hp -= attackValue;
-            //广播：受到伤害
-            OnGetHurtEvent?.Invoke();
-            //Debug.LogError("广播：受到伤害");
-
-            if ((destroyable) && (hp <= 0))
-            {
-                Destroy();
-
-            }
+            
         }
     }
+
+    bool IfColdDone = true;
+
+    IEnumerator CD()
+    {
+        IfColdDone = false;
+        yield return new WaitForSeconds(.4f);
+        IfColdDone = true;
+    }
+
+
+
+
     public void SetDestructibleOn()
     {
         hurtable = true ;

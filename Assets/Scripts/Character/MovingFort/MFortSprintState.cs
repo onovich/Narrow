@@ -14,6 +14,7 @@ public class MFortSprintState : FSMState
 
     public override void Act(IEnemy enemy)
     {
+        enemy.RemoveStatic();
         enemy.Sprint();
 
     }
@@ -22,6 +23,7 @@ public class MFortSprintState : FSMState
     {
         if (enemy.IfRelocated())
         {
+            enemy.SetStatic();
             enemy.StopSprint();
             //Debug.LogError("完成徘徊，切换状态");
             fsm.PerformTransition(Transition.Relocated);

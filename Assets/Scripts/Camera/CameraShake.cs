@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using deVoid.Utils;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.Rendering.Universal;
+using UnityEngine.Rendering;//使用Volume所需
+
 
 
 public class CameraShake : MonoBehaviour
 {
     Vector3 originalCameraPos;
     Color originalColor;
+    private Volume volume;
+    private ColorCurves colorCurve;
+
 
     #region Singleton
     public static CameraShake instance;
@@ -24,6 +30,15 @@ public class CameraShake : MonoBehaviour
     {
         originalCameraPos = Vector3.zero;
         originalColor = Camera.main.backgroundColor;
+
+        volume = Camera.main.GetComponent<Volume>();
+        ColorCurves tmp1;
+        if (volume.profile.TryGet<ColorCurves>(out tmp1))
+        {
+            colorCurve = tmp1;
+        }
+        colorCurve.active = false;
+
     }
 
     IEnumerator DOShake()
@@ -41,7 +56,11 @@ public class CameraShake : MonoBehaviour
         StartCoroutine(DOShake());
     }
 
-
+    public void FlashBlackAndWhite()
+    {
+        StopCoroutine(DoFlashBlackAndWhite());
+        StartCoroutine(DoFlashBlackAndWhite());
+    }
 
     public void FlashRed()
     {
@@ -74,7 +93,13 @@ public class CameraShake : MonoBehaviour
         yield return tweener.WaitForCompletion();
         Camera.main.DOColor(originalColor, .1f);
     }
-
-
+    
+    IEnumerator DoFlashBlackAndWhite()
+    {
+        colorCurve.active = true;
+        yield return new WaitForSeconds(.2f);
+        colorCurve.active = false;
+    }
+    
 
 }

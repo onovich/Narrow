@@ -87,6 +87,7 @@ public class ShootComponent : MonoBehaviour,IShootComponent
         yield return tweener.WaitForCompletion();
         GameObject bullet = GameObjectPoolManager.instance.GetInstance("BulletPool", bulletTrans.position, 10);
         bullet.GetComponent<BulletEntity>().Ctor(enemy.Direction);
+        if (enemy.Direction == 0) Debug.LogError("未赋值的子弹方向");
     }
 
     

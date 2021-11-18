@@ -31,8 +31,9 @@ public interface IEnemy
     bool IfWindupDone();
     bool IfRelocated();
     bool IfWinddownDone();
-    void SetTrigger();
-    void RemoveTrigger();
+    
+    void SetStatic();
+    void RemoveStatic();
     void SetDir();
 
 
